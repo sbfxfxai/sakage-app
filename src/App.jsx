@@ -1,6 +1,19 @@
 ﻿import { useState, useEffect } from 'react';
 import './App.css';
 
+// Reusable MenuImage component for consistent image handling
+const MenuImage = ({ src, alt, width, height }) => (
+    <img
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        loading="lazy"
+        decoding="async"
+        className="menu-item-image"
+    />
+);
+
 function App() {
     const [activeSection, setActiveSection] = useState('home');
     const [mobileNavActive, setMobileNavActive] = useState(false);
@@ -63,7 +76,13 @@ function App() {
         return savings > 0 ? savings.toFixed(2) : 0;
     };
 
-    // Menu Items
+    // Handle order total change with validation
+    const handleOrderTotalChange = (e) => {
+        const value = Math.max(0, Number(e.target.value)); // Ensure non-negative
+        setOrderTotal(value);
+    };
+
+    // Menu Data organized by categories
     const menuData = {
         breakfastSandwiches: [
             { id: 1, name: "Egg White Delight", price: "$5.99", description: "Fluffy egg whites served on your choice of: Artisan Ciabatta | Buttery Brioche | Golden Croissant. Cheese Upgrade available.", image: "/eggwhitsand.jpg", promo: "Most Ordered" },
@@ -104,6 +123,15 @@ function App() {
         ]
     };
 
+    // Organize menu items into categories for better rendering
+    const menuCategories = [
+        { id: 'breakfastSandwiches', title: 'Breakfast Sandwiches', items: menuData.breakfastSandwiches },
+        { id: 'lunchSpecials', title: 'Lunch Specials', items: menuData.lunchSpecials },
+        { id: 'comboMeals', title: 'Combo Meals', items: menuData.comboMeals },
+        { id: 'sidesAndSweets', title: 'Sides and Sweets', items: menuData.sidesAndSweets },
+        { id: 'beverages', title: 'Beverages', items: menuData.beverages }
+    ];
+
     // Customize Options
     const customizeOptions = {
         sandwichOptions: ["No egg white", "No butter"],
@@ -114,7 +142,7 @@ function App() {
 
     // Reviews
     const reviews = [
-        { id: 1, name: "Felisa R", date: "4/15/25", text: "Flagship Sakage Sandwich is very tasty, Hash Browns is very small and not worth it. Cheesecake Delight is very tasty but very small." },
+
         { id: 2, name: "Robert A", date: "4/7/25", text: "I got two steak sandwiches and a muffin—super tasty! The steak was juicy, bread fresh, and the BOGO deal was awesome." },
         { id: 3, name: "Sonya S", date: "4/23/25", text: "Food was absolutely Amazing! I had the The Waffle Ironclad Combo. Fast, fresh and flavorful. Everything was exactly as pictured and well exceeded my expectations. This is my new GOTO spot!!" },
         { id: 4, name: "Marcus S", date: "4/21/25", text: "The Flagship Sakage Sandwich was very tasty. Good portions." },
@@ -160,7 +188,7 @@ function App() {
                                 min="0"
                                 step="0.01"
                                 value={orderTotal}
-                                onChange={(e) => setOrderTotal(Number(e.target.value))}
+                                onChange={handleOrderTotalChange}
                                 aria-label="Enter your order total to calculate savings"
                             />
                             <span>$</span>
@@ -186,7 +214,7 @@ function App() {
                 <header className="sakage-header">
                     <nav className="sakage-nav">
                         <a href="#" className="sakage-logo">
-                            <img src="/1.jpg" alt="Sakage Logo" width="120" height="60" loading="lazy" decoding="async" />
+                            <MenuImage src="/1.jpg" alt="Sakage Logo" width="120" height="60" />
                         </a>
                         <button
                             className="sakage-mobile-nav-toggle"
@@ -239,7 +267,12 @@ function App() {
                                 <p>Determined to bridge the gap between premium steakhouse quality and street food accessibility, he created the perfect fusion. The name "Sakage" is a blend of "sausage," "steak," and "sandwich," embodying his culinary vision.</p>
                                 <p>After perfecting his recipe through midnight pop-ups in food trucks in downtown LA, Sakage now delivers its signature creations straight to your door via DoorDash. Every sandwich reflects Marco's dedication to quality, featuring grass-fed beef, artisanal sausages, and freshly baked bread.</p>
                             </div>
-                            <img src="/chefmarco.jpg" alt="Chef Marco preparing a sandwich" width="400" height="300" loading="lazy" decoding="async" style={{ maxWidth: '400px', borderRadius: '10px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }} />
+                            <MenuImage
+                                src="/chefmarco1 - Copy.JPG"
+                                alt="Chef Marco preparing a chicken sandwich"
+                                width="400"
+                                height="300"
+                            />
                         </div>
                     </div>
                 </section>
@@ -251,14 +284,19 @@ function App() {
                             <h2 id="menu-heading">Our Menu</h2>
                             <p className="sakage-menu-tagline">Fresh • Flavorful • Crafted with Care</p>
                         </div>
-                        {Object.entries(menuData).map(([category, items]) => (
-                            <div key={category} className="sakage-menu-category">
-                                <h3>{category.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</h3>
+                        {menuCategories.map(category => (
+                            <div key={category.id} className="sakage-menu-category">
+                                <h3>{category.title}</h3>
                                 <div className="sakage-menu-items">
-                                    {items.map(item => (
+                                    {category.items.map(item => (
                                         <div key={item.id} className="sakage-menu-item">
                                             <div className="sakage-menu-item-image">
-                                                <img src={item.image} alt={item.name} width="300" height="220" loading="lazy" decoding="async" />
+                                                <MenuImage
+                                                    src={item.image}
+                                                    alt={item.name}
+                                                    width="300"
+                                                    height="220"
+                                                />
                                             </div>
                                             <div className="sakage-menu-item-content">
                                                 <h4>{item.name}</h4>
@@ -340,26 +378,26 @@ function App() {
                         </p>
                         <div className="sakage-delivery-options">
                             <div className="sakage-delivery-option">
-                                <img src="/doordash.jpg" alt="DoorDash delivery option" width="100" height="100" loading="lazy" decoding="async" />
+                                <MenuImage src="/doordash.jpg" alt="DoorDash delivery option" width="100" height="100" />
                                 <h3>DoorDash</h3>
                                 <p>Order through our DoorDash virtual store (4.1 ★, 20+ reviews)</p>
                                 <a href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true" target="_blank" rel="noopener noreferrer" className="sakage-btn">Order on DoorDash</a>
                             </div>
                             <div className="sakage-delivery-option">
-                                <img src="/pickup.jpg" alt="Pickup option" width="100" height="100" loading="lazy" decoding="async" />
+                                <MenuImage src="/pickup.jpg" alt="Pickup option" width="100" height="100" />
                                 <h3>Pickup</h3>
                                 <p>Order ahead and pick up at our Columbia location</p>
                                 <a href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true" target="_blank" rel="noopener noreferrer" className="sakage-btn">Order Pickup</a>
                             </div>
                             <div className="sakage-delivery-option">
-                                <img src="/catering.jpg" alt="Catering option" width="100" height="100" loading="lazy" decoding="async" />
+                                <MenuImage src="/catering.jpg" alt="Catering option" width="100" height="100" />
                                 <h3>Catering</h3>
                                 <p>Perfect for office lunches and special events</p>
                                 <a href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true" target="_blank" rel="noopener noreferrer" className="sakage-btn">Order Catering</a>
                             </div>
                             <div className="sakage-delivery-option">
                                 <a href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true" target="_blank" rel="noopener noreferrer" className="sakage-btn">
-                                    <img src="https://ubr.to/order-online-black" alt="Order Online button" style={{ height: '48px' }} loading="lazy" decoding="async" />
+                                    <MenuImage src="https://ubr.to/order-online-black" alt="Order Online button" width="120" height="48" />
                                 </a>
                                 <h3>Order Online</h3>
                                 <p>Order directly through our online store</p>

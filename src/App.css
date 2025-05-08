@@ -100,6 +100,11 @@ h1, h2, h3, h4 {
                 background-color: var(--secondary);
             }
 
+        .sakage-nav-links a:focus {
+            outline: 2px solid var(--accent);
+            outline-offset: 3px;
+        }
+
 .sakage-sidebar {
     position: fixed;
     top: 0;
@@ -136,6 +141,11 @@ h1, h2, h3, h4 {
     .sakage-sidebar-nav a:hover,
     .sakage-sidebar-nav a.active {
         color: var(--secondary);
+    }
+
+    .sakage-sidebar-nav a:focus {
+        outline: 2px solid var(--accent);
+        outline-offset: 3px;
     }
 
 .sakage-hero {
@@ -187,6 +197,11 @@ h1, h2, h3, h4 {
         color: var(--text-white);
         transform: translateY(-3px);
         box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .sakage-btn:focus {
+        outline: 2px solid var(--accent);
+        outline-offset: 3px;
     }
 
 section {
@@ -409,6 +424,11 @@ section {
     transition: color 0.3s;
 }
 
+    .sakage-footer-links a:focus {
+        outline: 2px solid var(--accent);
+        outline-offset: 3px;
+    }
+
 .sakage-social-icons {
     display: flex;
     gap: 1rem;
@@ -427,6 +447,11 @@ section {
         border-radius: 50%;
     }
 
+        .sakage-social-icons a:focus {
+            outline: 2px solid var(--accent);
+            outline-offset: 3px;
+        }
+
 .sakage-footer-bottom {
     text-align: center;
     padding-top: 2rem;
@@ -442,6 +467,11 @@ section {
     font-size: 1.5rem;
     cursor: pointer;
 }
+
+    .sakage-mobile-nav-toggle:focus {
+        outline: 2px solid var(--accent);
+        outline-offset: 3px;
+    }
 
 /* Savings Widget Section */
 .sakage-savings {
@@ -509,7 +539,7 @@ section {
 .sakage-savings-result {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #E54C2E; /* Darkened --accent for contrast */
+    color: var(--accent);
     margin: 1rem 0;
 }
 
@@ -534,7 +564,7 @@ section {
 
     .sakage-savings-widget .sakage-btn:hover,
     .sakage-savings-widget .sakage-btn:focus {
-        background: #E54C2E;
+        background: #e54c2e;
         color: var(--text-white);
         transform: translateY(-3px);
         box-shadow: 0 4px 8px rgba(0,0,0,0.2);
@@ -542,7 +572,14 @@ section {
 
 /* Fix promo text contrast in #order section */
 .sakage-order p[style*="color"] {
-    color: #E54C2E !important; /* Override hardcoded #27ae60 */
+    color: var(--accent) !important;
+}
+
+/* MenuImage component styles */
+.menu-item-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 /* Responsive design */
@@ -560,11 +597,14 @@ section {
         flex-direction: column;
         align-items: center;
         padding: 1rem 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, transform 0.3s ease;
         transform: translateY(-150%);
-        transition: transform 0.3s ease;
     }
 
         .sakage-nav-links.active {
+            max-height: 500px;
             transform: translateY(0);
         }
 
@@ -635,6 +675,6 @@ section {
     }
 
     .sakage-savings-result {
-        color: #E54C2E;
+        color: var(--accent);
     }
 }
