@@ -1,4 +1,5 @@
 ﻿import { useState, useEffect } from 'react';
+import ReactPlayer from 'react-player';
 import './App.css';
 
 // Reusable MenuImage component for consistent image handling
@@ -14,10 +15,40 @@ const MenuImage = ({ src, alt, width, height }) => (
     />
 );
 
+// VideoBackground component for reusable video sections
+const VideoBackground = ({ videoSrc, children, overlay = true }) => (
+    <div className="video-background-section">
+        <ReactPlayer
+            url={videoSrc}
+            playing
+            loop
+            muted
+            width="100%"
+            height="100%"
+            style={{ position: 'absolute', top: 0, left: 0 }}
+        />
+        {overlay && <div className="video-overlay"></div>}
+        <div className="video-content">
+            {children}
+        </div>
+    </div>
+);
+
 function App() {
     const [activeSection, setActiveSection] = useState('home');
     const [mobileNavActive, setMobileNavActive] = useState(false);
     const [orderTotal, setOrderTotal] = useState(20); // Default order total for savings widget
+    const [isMobile, setIsMobile] = useState(false);
+
+    // Check for mobile devices
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     // Handle scroll to update active section
     useEffect(() => {
@@ -142,7 +173,6 @@ function App() {
 
     // Reviews
     const reviews = [
-
         { id: 2, name: "Robert A", date: "4/7/25", text: "I got two steak sandwiches and a muffin—super tasty! The steak was juicy, bread fresh, and the BOGO deal was awesome." },
         { id: 3, name: "Sonya S", date: "4/23/25", text: "Food was absolutely Amazing! I had the The Waffle Ironclad Combo. Fast, fresh and flavorful. Everything was exactly as pictured and well exceeded my expectations. This is my new GOTO spot!!" },
         { id: 4, name: "Marcus S", date: "4/21/25", text: "The Flagship Sakage Sandwich was very tasty. Good portions." },
@@ -154,9 +184,7 @@ function App() {
 
     return (
         <>
-            {/* Skip Links */}
-            <a href="#main-content" className="skip-link">Skip to content</a>
-            <a href="#primary-navigation" className="skip-link">Skip to primary navigation</a>
+            
 
             {/* Sidebar */}
             <aside className="sakage-sidebar">
@@ -237,117 +265,123 @@ function App() {
                     </nav>
                 </header>
 
-                {/* Hero Section */}
+                {/* Hero Section with Video Background */}
                 <section id="home" className="sakage-hero" aria-labelledby="home-heading">
-                    <div className="mui-18hlwal-fullSize"></div>
-                    <h1 id="home-heading">Sakage</h1>
-                    <p>Premium steak & sausage sandwiches, now on DoorDash with exclusive deals!</p>
-                    <div style={{ position: 'relative', zIndex: 2 }}>
-                        <a
-                            href="https://sakage.online"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="sakage-btn"
-                            style={{ position: 'relative' }}
-                        >
-                            Order Now
-                        </a>
-                    </div>
+                    <VideoBackground videoSrc="/Generated File May 13, 2025 - 4_10PM.mp4" overlay={false}>
+                        <div className="hero-content">
+                            <h1 id="home-heading">Sakage</h1>
+                            <p>Premium steak & sausage sandwiches, now on DoorDash with exclusive deals!</p>
+                            <div className="hero-button-container">
+                                <a
+                                    href="https://sakage.online"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="sakage-btn"
+                                >
+                                    Order Now
+                                </a>
+                            </div>
+                        </div>
+                    </VideoBackground>
                 </section>
 
-                {/* Story Section */}
+                {/* Story Section with Video Background */}
                 <section id="story" className="sakage-story" aria-labelledby="story-heading">
-                    <div className="sakage-container">
-                        <div className="sakage-section-title">
-                            <h2 id="story-heading">Our Story</h2>
-                        </div>
-                        <div className="sakage-story-content">
-                            <div className="sakage-story-text">
-                                <p>Founded by Chef Marco, Sakage was born from a late-night epiphany. A third-generation butcher and classically trained chef, Marco wanted to merge the rich flavors of steak and sausage—two staples he had never seen together in a sandwich.</p>
-                                <p>Determined to bridge the gap between premium steakhouse quality and street food accessibility, he created the perfect fusion. The name "Sakage" is a blend of "sausage," "steak," and "sandwich," embodying his culinary vision.</p>
-                                <p>After perfecting his recipe through midnight pop-ups in food trucks in downtown LA, Sakage now delivers its signature creations straight to your door via DoorDash. Every sandwich reflects Marco's dedication to quality, featuring grass-fed beef, artisanal sausages, and freshly baked bread.</p>
+                    <VideoBackground videoSrc="/Generated File May 13, 2025 - 4_14PM.mp4">
+                        <div className="sakage-container">
+                            <div className="sakage-section-title">
+                                <h2 id="story-heading">Our Story</h2>
                             </div>
-                            <MenuImage
-                                src="/chefmarco1 - Copy.JPG"
-                                alt="Chef Marco preparing a chicken sandwich"
-                                width="400"
-                                height="300"
-                            />
+                            <div className="sakage-story-content">
+                                <div className="sakage-story-text">
+                                    <p>Founded by Chef Marco, Sakage was born from a late-night epiphany. A third-generation butcher and classically trained chef, Marco wanted to merge the rich flavors of steak and sausage—two staples he had never seen together in a sandwich.</p>
+                                    <p>Determined to bridge the gap between premium steakhouse quality and street food accessibility, he created the perfect fusion. The name "Sakage" is a blend of "sausage," "steak," and "sandwich," embodying his culinary vision.</p>
+                                    <p>After perfecting his recipe through midnight pop-ups in food trucks in downtown LA, Sakage now delivers its signature creations straight to your door via DoorDash. Every sandwich reflects Marco's dedication to quality, featuring grass-fed beef, artisanal sausages, and freshly baked bread.</p>
+                                </div>
+                                <MenuImage
+                                    src="/chefmarco1 - Copy.JPG"
+                                    alt="Chef Marco preparing a chicken sandwich"
+                                    width="400"
+                                    height="300"
+                                />
+                            </div>
                         </div>
-                    </div>
+                    </VideoBackground>
                 </section>
 
-                {/* Menu Section */}
+                {/* Menu Section with Video Background */}
                 <section id="menu" className="sakage-menu" aria-labelledby="menu-heading">
-                    <div className="sakage-container">
-                        <div className="sakage-section-title">
-                            <h2 id="menu-heading">Our Menu</h2>
-                            <p className="sakage-menu-tagline">Fresh • Flavorful • Crafted with Care</p>
-                        </div>
-                        {menuCategories.map(category => (
-                            <div key={category.id} className="sakage-menu-category">
-                                <h3>{category.title}</h3>
-                                <div className="sakage-menu-items">
-                                    {category.items.map(item => (
-                                        <div key={item.id} className="sakage-menu-item">
-                                            <div className="sakage-menu-item-image">
-                                                <MenuImage
-                                                    src={item.image}
-                                                    alt={item.name}
-                                                    width="300"
-                                                    height="220"
-                                                />
+                    <VideoBackground videoSrc="/Generated File May 13, 2025 - 4_17PM.mp4">
+                        <div className="sakage-container">
+                            <div className="sakage-section-title">
+                                <h2 id="menu-heading">Our Menu</h2>
+                                <p className="sakage-menu-tagline">Fresh • Flavorful • Crafted with Care</p>
+                            </div>
+                            {menuCategories.map(category => (
+                                <div key={category.id} className="sakage-menu-category">
+                                    <h3>{category.title}</h3>
+                                    <div className="sakage-menu-items">
+                                        {category.items.map(item => (
+                                            <div key={item.id} className="sakage-menu-item">
+                                                <div className="sakage-menu-item-image">
+                                                    <MenuImage
+                                                        src={item.image}
+                                                        alt={item.name}
+                                                        width="300"
+                                                        height="220"
+                                                    />
+                                                </div>
+                                                <div className="sakage-menu-item-content">
+                                                    <h4>{item.name}</h4>
+                                                    <p className="sakage-price">{item.price}</p>
+                                                    {item.promo && <p className="sakage-promo">{item.promo}</p>}
+                                                    <p className="sakage-description">{item.description}</p>
+                                                    <a href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true" target="_blank" rel="noopener noreferrer" className="sakage-btn">Order Now</a>
+                                                </div>
                                             </div>
-                                            <div className="sakage-menu-item-content">
-                                                <h4>{item.name}</h4>
-                                                <p className="sakage-price">{item.price}</p>
-                                                {item.promo && <p className="sakage-promo">{item.promo}</p>}
-                                                <p className="sakage-description">{item.description}</p>
-                                                <a href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true" target="_blank" rel="noopener noreferrer" className="sakage-btn">Order Now</a>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        ))}
-                        <div className="sakage-menu-category sakage-customize-section">
-                            <h3>Customize Your Meal</h3>
-                            <div className="sakage-customize-options">
-                                <div className="sakage-customize-option">
-                                    <h4>Sandwich Options</h4>
-                                    <ul>
-                                        {customizeOptions.sandwichOptions.map((option, index) => (
-                                            <li key={index}>{option}</li>
                                         ))}
-                                    </ul>
-                                    <h4>Add Cheese (+$2.00)</h4>
-                                    <ul className="sakage-cheese-options">
-                                        {customizeOptions.cheeseOptions.map((option, index) => (
-                                            <li key={index}>{option}</li>
-                                        ))}
-                                    </ul>
+                                    </div>
                                 </div>
-                                <div className="sakage-customize-option">
-                                    <h4>Coffee Options</h4>
-                                    <ul>
-                                        <li>Flavors: {customizeOptions.coffeeOptions.join(' | ')}</li>
-                                    </ul>
+                            ))}
+                            <div className="sakage-menu-category sakage-customize-section">
+                                <h3>Customize Your Meal</h3>
+                                <div className="sakage-customize-options">
+                                    <div className="sakage-customize-option">
+                                        <h4>Sandwich Options</h4>
+                                        <ul>
+                                            {customizeOptions.sandwichOptions.map((option, index) => (
+                                                <li key={index}>{option}</li>
+                                            ))}
+                                        </ul>
+                                        <h4>Add Cheese (+$2.00)</h4>
+                                        <ul className="sakage-cheese-options">
+                                            {customizeOptions.cheeseOptions.map((option, index) => (
+                                                <li key={index}>{option}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                    <div className="sakage-customize-option">
+                                        <h4>Coffee Options</h4>
+                                        <ul>
+                                            <li>Flavors: {customizeOptions.coffeeOptions.join(' | ')}</li>
+                                        </ul>
+                                    </div>
+                                    <div className="sakage-customize-option">
+                                        <h4>Ciabatta Garlic Bread Add-On</h4>
+                                        <ul>
+                                            {customizeOptions.garlicBreadAddOn.map((option, index) => (
+                                                <li key={index}>{option}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
                                 </div>
-                                <div className="sakage-customize-option">
-                                    <h4>Ciabatta Garlic Bread Add-On</h4>
-                                    <ul>
-                                        {customizeOptions.garlicBreadAddOn.map((option, index) => (
-                                            <li key={index}>{option}</li>
-                                        ))}
-                                    </ul>
+                                <div className="sakage-menu-note">
+                                    <p>All sandwiches served on freshly baked ciabatta unless stated otherwise.</p>
+                                    <p>Ask about pairing your meal with our premium coffee for the ultimate experience! ☕️</p>
                                 </div>
-                            </div>
-                            <div className="sakage-menu-note">
-                                <p>All sandwiches served on freshly baked ciabatta unless stated otherwise.</p>
-                                <p>Ask about pairing your meal with our premium coffee for the ultimate experience! ☕️</p>
                             </div>
                         </div>
-                    </div>
+                    </VideoBackground>
                 </section>
 
                 {/* Locations Section */}
