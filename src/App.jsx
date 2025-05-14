@@ -37,7 +37,6 @@ const VideoBackground = ({ videoSrc, children, overlay = true }) => (
 function App() {
     const [activeSection, setActiveSection] = useState('home');
     const [mobileNavActive, setMobileNavActive] = useState(false);
-    const [orderTotal, setOrderTotal] = useState(20); // Default order total for savings widget
     const [isMobile, setIsMobile] = useState(false);
 
     // Check for mobile devices
@@ -97,20 +96,6 @@ function App() {
     // Toggle mobile navigation
     const toggleMobileNav = () => {
         setMobileNavActive(!mobileNavActive);
-    };
-
-    // Calculate savings for direct ordering vs DoorDash
-    const calculateSavings = (total) => {
-        const doorDashCommission = total * 0.20; // 20% commission
-        const directProcessingFee = total * 0.029 + 0.30; // 2.9% + $0.30
-        const savings = doorDashCommission - directProcessingFee;
-        return savings > 0 ? savings.toFixed(2) : 0;
-    };
-
-    // Handle order total change with validation
-    const handleOrderTotalChange = (e) => {
-        const value = Math.max(0, Number(e.target.value)); // Ensure non-negative
-        setOrderTotal(value);
     };
 
     // Menu Data organized by categories
@@ -184,8 +169,6 @@ function App() {
 
     return (
         <>
-            
-
             {/* Sidebar */}
             <aside className="sakage-sidebar">
                 <nav id="primary-navigation" className="sakage-sidebar-nav">
@@ -203,41 +186,6 @@ function App() {
 
             {/* Main Content */}
             <main id="main-content">
-                {/* Savings Widget Section */}
-                <section id="savings" className="sakage-savings" aria-labelledby="savings-heading">
-                    <div className="sakage-savings-widget">
-                        <h2 id="savings-heading">Save More by Ordering Direct!</h2>
-                        <p>Order through our website to avoid DoorDash commission fees and save big!</p>
-                        <div className="sakage-savings-input">
-                            <label htmlFor="order-total" className="sr-only">Enter your order total</label>
-                            <input
-                                id="order-total"
-                                type="number"
-                                min="0"
-                                step="0.01"
-                                value={orderTotal}
-                                onChange={handleOrderTotalChange}
-                                aria-label="Enter your order total to calculate savings"
-                            />
-                            <span>$</span>
-                        </div>
-                        <p className="sakage-savings-result" aria-live="polite">
-                            Save ${calculateSavings(orderTotal)} on a ${orderTotal.toFixed(2)} order!
-                        </p>
-                        <p className="sakage-savings-note">
-                            Direct orders have no commission fees, just a 2.9% + $0.30 payment processing fee. DoorDash orders include a 20% commission.
-                        </p>
-                        <a
-                            href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="sakage-btn"
-                        >
-                            Order Direct & Save
-                        </a>
-                    </div>
-                </section>
-
                 {/* Header */}
                 <header className="sakage-header">
                     <nav className="sakage-nav">
