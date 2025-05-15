@@ -2,7 +2,7 @@
 import ReactPlayer from 'react-player';
 import './App.css';
 
-// Reusable MenuImage component for consistent image handling
+// Reusable MenuImage component
 const MenuImage = ({ src, alt, width, height }) => (
     <img
         src={src}
@@ -15,7 +15,7 @@ const MenuImage = ({ src, alt, width, height }) => (
     />
 );
 
-// VideoBackground component for reusable video sections
+// VideoBackground component
 const VideoBackground = ({ videoSrc, children, overlay = true }) => (
     <div className="video-background-section">
         <ReactPlayer
@@ -28,33 +28,69 @@ const VideoBackground = ({ videoSrc, children, overlay = true }) => (
             style={{ position: 'absolute', top: 0, left: 0 }}
         />
         {overlay && <div className="video-overlay"></div>}
-        <div className="video-content">
-            {children}
-        </div>
+        <div className="video-content">{children}</div>
     </div>
 );
+
+// Reusable NavLinks component
+const NavLinks = ({ activeSection, scrollToSection, mobileNavActive, toggleMobileNav }) => {
+    const links = [
+        { id: 'home', label: 'Home' },
+        { id: 'story', label: 'Our Story' },
+        { id: 'menu', label: 'Menu' },
+        { id: 'locations', label: 'Locations' },
+        { id: 'order', label: 'Order Now', external: 'https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true' },
+        { id: 'reviews', label: 'Reviews' },
+        { id: 'faq', label: 'FAQ' }
+    ];
+
+    return (
+        <ul className={`sakage-sidebar-nav-links ${mobileNavActive ? 'active' : ''}`}>
+            {links.map(({ id, label, external }) => (
+                <li key={id}>
+                    <a
+                        href={external || `#${id}`}
+                        className={activeSection === id ? 'active' : ''}
+                        onClick={(e) => {
+                            if (!external) {
+                                e.preventDefault();
+                                scrollToSection(id);
+                            }
+                            if (mobileNavActive) toggleMobileNav();
+                        }}
+                        {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                    >
+                        {label}
+                    </a>
+                </li>
+            ))}
+        </ul>
+    );
+};
 
 function App() {
     const [activeSection, setActiveSection] = useState('home');
     const [mobileNavActive, setMobileNavActive] = useState(false);
-    const [isMobile, setIsMobile] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
     // Check for mobile devices
     useEffect(() => {
         const handleResize = () => {
-            setIsMobile(window.innerWidth < 768);
+            const newIsMobile = window.innerWidth < 768;
+            setIsMobile(newIsMobile);
+            if (!newIsMobile) setMobileNavActive(false); // Reset on desktop
+            console.log('isMobile:', newIsMobile, 'mobileNavActive:', mobileNavActive);
         };
         handleResize();
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
-    }, []);
+    }, [mobileNavActive]);
 
     // Handle scroll to update active section
     useEffect(() => {
         const handleScroll = () => {
             const sections = document.querySelectorAll('section');
             let current = '';
-
             sections.forEach(section => {
                 const sectionTop = section.offsetTop;
                 const sectionHeight = section.clientHeight;
@@ -62,12 +98,10 @@ function App() {
                     current = section.getAttribute('id');
                 }
             });
-
             if (current !== '' && current !== activeSection) {
                 setActiveSection(current);
             }
         };
-
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, [activeSection]);
@@ -80,7 +114,7 @@ function App() {
         };
     }, [mobileNavActive]);
 
-    // Scroll to section when clicking nav links (excluding Order Now)
+    // Scroll to section
     const scrollToSection = (sectionId) => {
         const section = document.getElementById(sectionId);
         if (section) {
@@ -95,10 +129,11 @@ function App() {
 
     // Toggle mobile navigation
     const toggleMobileNav = () => {
-        setMobileNavActive(!mobileNavActive);
+        setMobileNavActive(prev => !prev);
+        console.log('Toggled mobileNavActive to:', !mobileNavActive);
     };
 
-    // Menu Data organized by categories
+    // Menu Data
     const menuData = {
         breakfastSandwiches: [
             { id: 1, name: "Egg White Delight", price: "$5.99", description: "Fluffy egg whites served on your choice of: Artisan Ciabatta | Buttery Brioche | Golden Croissant. Cheese Upgrade available.", image: "/eggwhitsand.jpg", promo: "Most Ordered" },
@@ -139,7 +174,7 @@ function App() {
         ]
     };
 
-    // Organize menu items into categories for better rendering
+    // Menu Categories
     const menuCategories = [
         { id: 'breakfastSandwiches', title: 'Breakfast Sandwiches', items: menuData.breakfastSandwiches },
         { id: 'lunchSpecials', title: 'Lunch Specials', items: menuData.lunchSpecials },
@@ -164,34 +199,18 @@ function App() {
         { id: 5, name: "Peter S", date: "4/20/25", text: "Absolutely loved my Steak & Egg White Power Stack. Perfectly tasty and rich. A great way to start the day!" }
     ];
 
-    // Current year for footer copyright
+    // Current year
     const currentYear = new Date().getFullYear();
 
     return (
         <>
-            {/* Sidebar */}
-            <aside className="sakage-sidebar">
-                <nav id="primary-navigation" className="sakage-sidebar-nav">
-                    <ul>
-                        <li><a href="#home" className={activeSection === 'home' ? 'active' : ''} onClick={(e) => { e.preventDefault(); scrollToSection('home'); }}>Home</a></li>
-                        <li><a href="#story" className={activeSection === 'story' ? 'active' : ''} onClick={(e) => { e.preventDefault(); scrollToSection('story'); }}>Our Story</a></li>
-                        <li><a href="#menu" className={activeSection === 'menu' ? 'active' : ''} onClick={(e) => { e.preventDefault(); scrollToSection('menu'); }}>Menu</a></li>
-                        <li><a href="#locations" className={activeSection === 'locations' ? 'active' : ''} onClick={(e) => { e.preventDefault(); scrollToSection('locations'); }}>Locations</a></li>
-                        <li><a href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true" target="_blank" rel="noopener noreferrer" className={activeSection === 'order' ? 'active' : ''}>Order Now</a></li>
-                        <li><a href="#reviews" className={activeSection === 'reviews' ? 'active' : ''} onClick={(e) => { e.preventDefault(); scrollToSection('reviews'); }}>Reviews</a></li>
-                        <li><a href="#faq" className={activeSection === 'faq' ? 'active' : ''} onClick={(e) => { e.preventDefault(); scrollToSection('faq'); }}>FAQ</a></li>
-                    </ul>
-                </nav>
-            </aside>
-
-            {/* Main Content */}
-            <main id="main-content">
-                {/* Header */}
-                <header className="sakage-header">
-                    <nav className="sakage-nav">
-                        <a href="#" className="sakage-logo">
-                            <MenuImage src="/1.jpg" alt="Sakage Logo" width="120" height="60" />
-                        </a>
+            {/* Sleek Sidebar */}
+            <aside className={`sakage-sidebar ${mobileNavActive ? 'active' : ''}`}>
+                <div className="sakage-sidebar-header">
+                    <a href="#" className="sakage-logo">
+                        <MenuImage src="/1.jpg" alt="Sakage Logo" width="120" height="60" />
+                    </a>
+                    {isMobile && (
                         <button
                             className="sakage-mobile-nav-toggle"
                             onClick={toggleMobileNav}
@@ -201,19 +220,34 @@ function App() {
                         >
                             <i className={`fas ${mobileNavActive ? 'fa-times' : 'fa-bars'}`}></i>
                         </button>
-                        <ul className={`sakage-nav-links ${mobileNavActive ? 'active' : ''}`}>
-                            <li><a href="#home" className={activeSection === 'home' ? 'active' : ''} onClick={(e) => { e.preventDefault(); scrollToSection('home'); }}>Home</a></li>
-                            <li><a href="#story" className={activeSection === 'story' ? 'active' : ''} onClick={(e) => { e.preventDefault(); scrollToSection('story'); }}>Our Story</a></li>
-                            <li><a href="#menu" className={activeSection === 'menu' ? 'active' : ''} onClick={(e) => { e.preventDefault(); scrollToSection('menu'); }}>Menu</a></li>
-                            <li><a href="#locations" className={activeSection === 'locations' ? 'active' : ''} onClick={(e) => { e.preventDefault(); scrollToSection('locations'); }}>Locations</a></li>
-                            <li><a href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true" target="_blank" rel="noopener noreferrer" className={activeSection === 'order' ? 'active' : ''}>Order Now</a></li>
-                            <li><a href="#reviews" className={activeSection === 'reviews' ? 'active' : ''} onClick={(e) => { e.preventDefault(); scrollToSection('reviews'); }}>Reviews</a></li>
-                            <li><a href="#faq" className={activeSection === 'faq' ? 'active' : ''} onClick={(e) => { e.preventDefault(); scrollToSection('faq'); }}>FAQ</a></li>
-                        </ul>
-                    </nav>
-                </header>
+                    )}
+                </div>
+                <nav id="primary-navigation" className="sakage-sidebar-nav">
+                    <NavLinks
+                        activeSection={activeSection}
+                        scrollToSection={scrollToSection}
+                        mobileNavActive={mobileNavActive}
+                        toggleMobileNav={toggleMobileNav}
+                    />
+                </nav>
+            </aside>
 
-                {/* Hero Section with Video Background */}
+            {/* Mobile Toggle Button (Outside Sidebar for Accessibility) */}
+            {isMobile && (
+                <button
+                    className="sakage-mobile-nav-toggle"
+                    onClick={toggleMobileNav}
+                    aria-label="Toggle navigation menu"
+                    aria-expanded={mobileNavActive}
+                    aria-controls="primary-navigation"
+                >
+                    <i className={`fas ${mobileNavActive ? 'fa-times' : 'fa-bars'}`}></i>
+                </button>
+            )}
+
+            {/* Main Content */}
+            <main id="main-content">
+                {/* Hero Section */}
                 <section id="home" className="sakage-hero" aria-labelledby="home-heading">
                     <VideoBackground videoSrc="/Generated File May 13, 2025 - 4_10PM.mp4" overlay={false}>
                         <div className="hero-content">
@@ -233,7 +267,7 @@ function App() {
                     </VideoBackground>
                 </section>
 
-                {/* Story Section with Video Background */}
+                {/* Story Section */}
                 <section id="story" className="sakage-story" aria-labelledby="story-heading">
                     <VideoBackground videoSrc="/Generated File May 13, 2025 - 4_14PM.mp4">
                         <div className="sakage-container">
@@ -242,9 +276,9 @@ function App() {
                             </div>
                             <div className="sakage-story-content">
                                 <div className="sakage-story-text">
-                                    <p>Founded by Chef Marco, Sakage was born from a late-night epiphany. A third-generation butcher and classically trained chef, Marco wanted to merge the rich flavors of steak and sausage—two staples he had never seen together in a sandwich.</p>
-                                    <p>Determined to bridge the gap between premium steakhouse quality and street food accessibility, he created the perfect fusion. The name "Sakage" is a blend of "sausage," "steak," and "sandwich," embodying his culinary vision.</p>
-                                    <p>After perfecting his recipe through midnight pop-ups in food trucks in downtown LA, Sakage now delivers its signature creations straight to your door via DoorDash. Every sandwich reflects Marco's dedication to quality, featuring grass-fed beef, artisanal sausages, and freshly baked bread.</p>
+                                    <p>Founded by Chef Marco, Sakage was born from a late-night epiphany...</p>
+                                    <p>Determined to bridge the gap between premium steakhouse quality...</p>
+                                    <p>After perfecting his recipe through midnight pop-ups...</p>
                                 </div>
                                 <MenuImage
                                     src="/chefmarco1 - Copy.JPG"
@@ -257,7 +291,7 @@ function App() {
                     </VideoBackground>
                 </section>
 
-                {/* Menu Section with Video Background */}
+                {/* Menu Section */}
                 <section id="menu" className="sakage-menu" aria-labelledby="menu-heading">
                     <VideoBackground videoSrc="/Generated File May 13, 2025 - 4_17PM.mp4">
                         <div className="sakage-container">
@@ -284,7 +318,14 @@ function App() {
                                                     <p className="sakage-price">{item.price}</p>
                                                     {item.promo && <p className="sakage-promo">{item.promo}</p>}
                                                     <p className="sakage-description">{item.description}</p>
-                                                    <a href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true" target="_blank" rel="noopener noreferrer" className="sakage-btn">Order Now</a>
+                                                    <a
+                                                        href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true"
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="sakage-btn"
+                                                    >
+                                                        Order Now
+                                                    </a>
                                                 </div>
                                             </div>
                                         ))}
@@ -325,7 +366,7 @@ function App() {
                                 </div>
                                 <div className="sakage-menu-note">
                                     <p>All sandwiches served on freshly baked ciabatta unless stated otherwise.</p>
-                                    <p>Ask about pairing your meal with our premium coffee for the ultimate experience! ☕️</p>
+                                    <p>Ask about pairing your meal with our premium coffee! ☕️</p>
                                 </div>
                             </div>
                         </div>
@@ -354,8 +395,8 @@ function App() {
                         <div className="sakage-section-title">
                             <h2 id="order-heading">Order Now</h2>
                         </div>
-                        <p>Enjoy our premium sandwiches delivered in ~34 minutes from our Columbia location (1.5 mi away)!</p>
-                        <p style={{ color: '#E54C2E', fontWeight: 'bold', marginBottom: '20px' }}>
+                        <p>Enjoy our premium sandwiches delivered in ~34 minutes!</p>
+                        <p style={{ color: '#FF6347', fontWeight: 'bold', marginBottom: '20px' }}>
                             Add $8.01 to get 20% off (up to $6) • $0 Delivery Fee with DashPass
                         </p>
                         <div className="sakage-delivery-options">
@@ -363,22 +404,48 @@ function App() {
                                 <MenuImage src="/doordash.jpg" alt="DoorDash delivery option" width="100" height="100" />
                                 <h3>DoorDash</h3>
                                 <p>Order through our DoorDash virtual store (4.1 ★, 20+ reviews)</p>
-                                <a href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true" target="_blank" rel="noopener noreferrer" className="sakage-btn">Order on DoorDash</a>
+                                <a
+                                    href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="sakage-btn"
+                                >
+                                    Order on DoorDash
+                                </a>
                             </div>
                             <div className="sakage-delivery-option">
                                 <MenuImage src="/pickup.jpg" alt="Pickup option" width="100" height="100" />
                                 <h3>Pickup</h3>
                                 <p>Order ahead and pick up at our Columbia location</p>
-                                <a href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true" target="_blank" rel="noopener noreferrer" className="sakage-btn">Order Pickup</a>
+                                <a
+                                    href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="sakage-btn"
+                                >
+                                    Order Pickup
+                                </a>
                             </div>
                             <div className="sakage-delivery-option">
                                 <MenuImage src="/catering.jpg" alt="Catering option" width="100" height="100" />
                                 <h3>Catering</h3>
                                 <p>Perfect for office lunches and special events</p>
-                                <a href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true" target="_blank" rel="noopener noreferrer" className="sakage-btn">Order Catering</a>
+                                <a
+                                    href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="sakage-btn"
+                                >
+                                    Order Catering
+                                </a>
                             </div>
                             <div className="sakage-delivery-option">
-                                <a href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true" target="_blank" rel="noopener noreferrer" className="sakage-btn">
+                                <a
+                                    href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="sakage-btn"
+                                >
                                     <MenuImage src="https://ubr.to/order-online-black" alt="Order Online button" width="120" height="48" />
                                 </a>
                                 <h3>Order Online</h3>
