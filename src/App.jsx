@@ -108,8 +108,15 @@ function App() {
 
     // Prevent background scrolling when mobile menu is open
     useEffect(() => {
-        document.body.style.overflow = mobileNavActive ? 'hidden' : 'auto';
+        if (mobileNavActive) {
+            document.body.classList.add('menu-open');
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.classList.remove('menu-open');
+            document.body.style.overflow = 'auto';
+        }
         return () => {
+            document.body.classList.remove('menu-open');
             document.body.style.overflow = 'auto';
         };
     }, [mobileNavActive]);
@@ -431,7 +438,7 @@ function App() {
                                 <h3>Catering</h3>
                                 <p>Perfect for office lunches and special events</p>
                                 <a
-                                    href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true"
+                                    href="https://order.online/store/sakage-col EVs-columbia-33609701/?hideModal=true&pickup=true"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="sakage-btn"

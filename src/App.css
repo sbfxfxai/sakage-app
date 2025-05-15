@@ -22,8 +22,13 @@ body {
     line-height: 1.6;
     overflow-x: hidden;
     font-size: 17px;
-    padding-left: 250px; /* Add padding to account for sidebar */
 }
+
+    body.menu-open {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+    }
 
 h1, h2, h3, h4 {
     font-family: 'Playfair Display', serif;
@@ -31,83 +36,7 @@ h1, h2, h3, h4 {
     color: var(--text-white);
 }
 
-.mui-18hlwal-fullSize {
-    opacity: 1;
-    object-fit: cover;
-    object-position: 50% 50%;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    left: 0;
-    top: 0;
-    transition: opacity 0.1s ease;
-    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('/hero-image.jpg') no-repeat center center;
-    background-size: cover;
-}
-
-.sakage-header {
-    background-color: var(--primary);
-    color: var(--text-white);
-    padding: 1rem;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    width: 100%;
-    margin-left: 250px; /* Account for sidebar */
-    width: calc(100% - 250px); /* Adjust width to account for sidebar */
-}
-
-.sakage-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 1rem;
-}
-
-.sakage-logo img {
-    max-height: 60px;
-    width: auto;
-    vertical-align: middle;
-}
-
-.sakage-nav-links {
-    display: flex;
-    list-style: none;
-}
-
-    .sakage-nav-links li {
-        margin-left: 2rem;
-    }
-
-    .sakage-nav-links a {
-        color: var(--text-white);
-        text-decoration: none;
-        font-weight: 500;
-        transition: color 0.3s;
-        position: relative;
-    }
-
-        .sakage-nav-links a:hover,
-        .sakage-nav-links a.active {
-            color: var(--secondary);
-        }
-
-            .sakage-nav-links a.active::after {
-                content: '';
-                position: absolute;
-                bottom: -5px;
-                left: 0;
-                width: 100%;
-                height: 2px;
-                background-color: var(--secondary);
-            }
-
-        .sakage-nav-links a:focus {
-            outline: 2px solid var(--accent);
-            outline-offset: 3px;
-        }
-
+/* Sidebar Styles */
 .sakage-sidebar {
     position: fixed;
     top: 0;
@@ -116,9 +45,51 @@ h1, h2, h3, h4 {
     height: 100%;
     background-color: var(--dark);
     color: var(--text-white);
-    padding: 2rem;
-    z-index: 99;
+    padding: 2rem 1rem;
+    z-index: 1000; /* Above video backgrounds */
+    transition: transform 0.3s ease;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
     overflow-y: auto;
+}
+
+/* Desktop: Always visible */
+@media (min-width: 768px) {
+    .sakage-sidebar {
+        transform: translateX(0);
+    }
+
+    main {
+        margin-left: 250px; /* Offset content */
+    }
+}
+
+/* Mobile: Hidden by default, shown when active */
+@media (max-width: 767px) {
+    .sakage-sidebar {
+        transform: translateX(-100%);
+        width: 100%;
+        max-width: 250px;
+    }
+
+        .sakage-sidebar.active {
+            transform: translateX(0);
+        }
+
+    main {
+        padding-top: 60px; /* Space for toggle button */
+    }
+}
+
+.sakage-sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+
+.sakage-logo img {
+    max-width: 100%;
+    height: auto;
 }
 
 .sakage-sidebar-nav ul {
@@ -126,21 +97,25 @@ h1, h2, h3, h4 {
 }
 
 .sakage-sidebar-nav li {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .sakage-sidebar-nav a {
     color: var(--text-white);
     text-decoration: none;
     font-weight: 500;
-    transition: color 0.3s;
+    font-size: 1.1rem;
+    transition: color 0.3s, padding-left 0.3s;
     display: block;
-    padding: 0.5rem 0;
+    padding: 0.5rem 1rem;
 }
 
     .sakage-sidebar-nav a:hover,
     .sakage-sidebar-nav a.active {
         color: var(--secondary);
+        padding-left: 1.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
     }
 
     .sakage-sidebar-nav a:focus {
@@ -148,6 +123,69 @@ h1, h2, h3, h4 {
         outline-offset: 3px;
     }
 
+/* Mobile Toggle Button */
+.sakage-mobile-nav-toggle {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    .sakage-mobile-nav-toggle {
+        display: flex;
+        position: fixed;
+        top: 15px;
+        right: 15px;
+        z-index: 1001; /* Above sidebar */
+        background: rgba(0, 0, 0, 0.5);
+        border: none;
+        color: var(--text-white);
+        font-size: 1.5rem;
+        padding: 0.5rem;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+        .sakage-mobile-nav-toggle:focus {
+            outline: 2px solid var(--secondary);
+            outline-offset: 3px;
+        }
+}
+
+/* Video Background */
+.video-background-section {
+    position: relative;
+    overflow: hidden;
+    z-index: 1; /* Below sidebar */
+}
+
+    .video-background-section > div:first-child {
+        position: absolute !important;
+        top: 0;
+        left: 0;
+        width: 100% !important;
+        height: 100% !important;
+        z-index: -1;
+    }
+
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 0;
+}
+
+.video-content {
+    position: relative;
+    z-index: 2;
+}
+
+/* Hero Section */
 .sakage-hero {
     position: relative;
     height: 80vh;
@@ -164,7 +202,7 @@ h1, h2, h3, h4 {
     .sakage-hero h1 {
         font-size: 4.5rem;
         margin-bottom: 1rem;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         z-index: 1;
     }
 
@@ -172,10 +210,11 @@ h1, h2, h3, h4 {
         font-size: 1.5rem;
         max-width: 800px;
         margin-bottom: 2rem;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         z-index: 1;
     }
 
+/* Button Styles */
 .sakage-btn {
     display: inline-block;
     background-color: var(--accent);
@@ -196,7 +235,7 @@ h1, h2, h3, h4 {
         background-color: #e54c2e;
         color: var(--text-white);
         transform: translateY(-3px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 
     .sakage-btn:focus {
@@ -204,6 +243,7 @@ h1, h2, h3, h4 {
         outline-offset: 3px;
     }
 
+/* General Section Styles */
 section {
     padding: 5rem 1rem;
     width: 100%;
@@ -239,6 +279,7 @@ section {
             background-color: var(--accent);
         }
 
+/* Story Section */
 .sakage-story {
     background-color: var(--light);
     color: var(--text-white);
@@ -266,6 +307,7 @@ section {
         color: var(--text-white);
     }
 
+/* Menu Section */
 .sakage-menu {
     background-color: var(--dark);
 }
@@ -280,13 +322,13 @@ section {
     background-color: var(--card-bg);
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
 }
 
     .sakage-menu-item:hover {
         transform: translateY(-10px);
-        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
     }
 
 .sakage-menu-item-image {
@@ -325,6 +367,7 @@ section {
     margin-bottom: 10px;
 }
 
+/* Locations Section */
 .sakage-locations {
     background-color: var(--light);
 }
@@ -337,6 +380,7 @@ section {
     color: var(--text-white);
 }
 
+/* Order Section */
 .sakage-order {
     background-color: var(--dark);
     text-align: center;
@@ -368,7 +412,7 @@ section {
     }
 
     .sakage-delivery-option p {
-        color: rgba(255,255,255,0.9);
+        color: rgba(255, 255, 255, 0.9);
         margin-bottom: 1.5rem;
     }
 
@@ -383,6 +427,12 @@ section {
         border: 2px solid var(--accent);
     }
 
+/* Fix promo text contrast in #order section */
+.sakage-order p[style*="color"] {
+    color: var(--accent) !important;
+}
+
+/* Reviews Section */
 .sakage-reviews {
     background: var(--light);
 }
@@ -401,12 +451,11 @@ section {
     color: var(--text-white);
 }
 
+/* Footer Section */
 .sakage-footer {
     background-color: var(--dark);
     color: var(--text-white);
     padding: 4rem 1rem 2rem;
-    margin-left: 250px; /* Account for sidebar */
-    width: calc(100% - 250px); /* Adjust width to account for sidebar */
 }
 
 .sakage-footer-content {
@@ -442,7 +491,7 @@ section {
     .sakage-social-icons a {
         color: var(--text-white);
         font-size: 1.2rem;
-        background-color: rgba(255,255,255,0.1);
+        background-color: rgba(255, 255, 255, 0.1);
         width: 40px;
         height: 40px;
         display: flex;
@@ -459,27 +508,8 @@ section {
 .sakage-footer-bottom {
     text-align: center;
     padding-top: 2rem;
-    border-top: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     color: var(--text-white);
-}
-
-.sakage-mobile-nav-toggle {
-    display: none;
-    background: transparent;
-    border: none;
-    color: var(--text-white);
-    font-size: 1.5rem;
-    cursor: pointer;
-}
-
-    .sakage-mobile-nav-toggle:focus {
-        outline: 2px solid var(--accent);
-        outline-offset: 3px;
-    }
-
-/* Fix promo text contrast in #order section */
-.sakage-order p[style*="color"] {
-    color: var(--accent) !important;
 }
 
 /* MenuImage component styles */
@@ -489,82 +519,19 @@ section {
     object-fit: cover;
 }
 
-/* Video background styles */
-.video-background-section {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-}
-
-.video-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1;
-}
-
-.video-content {
-    position: relative;
-    z-index: 2;
-}
-
-/* Responsive design */
-@media (max-width: 1024px) {
-    body {
-        padding-left: 0;
-    }
-
+/* iOS Compatibility */
+@supports (-webkit-touch-callout: none) {
     .sakage-sidebar {
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-    }
-
-        .sakage-sidebar.active {
-            transform: translateX(0);
-        }
-
-    .sakage-header {
-        margin-left: 0;
-        width: 100%;
-    }
-
-    .sakage-footer {
-        margin-left: 0;
-        width: 100%;
+        position: fixed;
     }
 
     .sakage-mobile-nav-toggle {
-        display: block;
-    }
-
-    .sakage-nav-links {
         position: fixed;
-        top: 70px;
-        left: 0;
-        width: 100%;
-        background-color: var(--primary);
-        flex-direction: column;
-        align-items: center;
-        padding: 1rem 0;
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease, transform 0.3s ease;
-        transform: translateY(-150%);
     }
+}
 
-        .sakage-nav-links.active {
-            max-height: 500px;
-            transform: translateY(0);
-        }
-
-        .sakage-nav-links li {
-            margin: 1rem 0;
-        }
-
+/* Responsive Design */
+@media (max-width: 768px) {
     .sakage-hero h1 {
         font-size: 3rem;
     }
@@ -572,9 +539,13 @@ section {
     .sakage-hero p {
         font-size: 1.2rem;
     }
+
+    .sakage-section-title h2 {
+        font-size: 2rem;
+    }
 }
 
-/* Dark mode adjustments */
+/* Dark Mode Adjustments */
 @media (prefers-color-scheme: dark) {
     body {
         background-color: var(--dark);
