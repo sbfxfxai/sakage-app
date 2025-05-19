@@ -147,15 +147,11 @@ function App() {
             { id: 2, name: "Steak & Egg White Power Stack", price: "$12.99", description: "Tender premium steak, fluffy egg whites, melted cheese, and grilled onions on ciabatta.", image: "/steaksand1.jpg", promo: "Most Ordered" },
             { id: 3, name: "Sausage & Egg White Power Stack", price: "$9.99", description: "Gourmet Italian sausage, fluffy egg whites, and melted cheese on ciabatta.", image: "/sausagesand.jpg", promo: "Most Ordered" },
             { id: 4, name: "Flagship Sakage Sandwich", price: "$16.99", description: "Signature blend of premium steak, Italian sausage, and fluffy egg whites on ciabatta.", image: "/sakage1.jpg", promo: "Most Ordered" },
-            { id: 5, name: "Bacon & Cheddar Sandwich", price: "$8.00", description: "Crispy bacon and sharp cheddar on a toasted ciabatta roll.", image: "/baccheddar1.jpg" },
-            { id: 6, name: "Veggie Delight Sandwich", price: "$8.00", description: "Grilled zucchini, bell peppers, mushrooms, and melted Swiss cheese on ciabatta.", image: "/veggiesand.jpg" },
-            { id: 7, name: "Ham & Swiss Sandwich", price: "$8.00", description: "Smoked ham and Swiss cheese layered in a buttery croissant.", image: "/hamswisssand1.jpg" },
-            { id: 8, name: "Turkey Avocado Wrap", price: "$8.00", description: "Sliced turkey, avocado, spinach, and tomato in a spinach tortilla.", image: "/turkeyavocado1.jpg" }
+            { id: 5, name: "Bacon & Cheddar Sandwich", price: "$8.00", description: "Crispy bacon and sharp cheddar on a toasted ciabatta roll.", image: "/baccheddar1.jpg" }
         ],
         lunchSpecials: [
             { id: 9, name: "Cheesy Pulled Chicken", price: "$14.99", description: "Juicy pulled chicken rubbed with smoked paprika, garlic & cayenne. Double-cheesed with melted cheddar and mozzarella. Spicy kick with gooey cheese blend.", image: "/chickensand.jpg", promo: "Most Ordered" },
             { id: 10, name: "BBQ Pork Sandwich", price: "$11.99", description: "Slow-braised pulled pork smothered in house-made tangy BBQ sauce, served on: Toasted Ciabatta | Buttery Brioche | Flaky Croissant. Cheese Melt Upgrade.", image: "/bbqporksand.jpg", promo: "Most Ordered" },
-            { id: 11, name: "Spicy Beef Sandwich", price: "$13.00", description: "Spicy seasoned beef with a kick, grilled and served with melted cheese on ciabatta.", image: "/beefsand.jpg" },
             { id: 12, name: "Fire Grilled Brioche Beef Frank", price: "$9.99", description: "Beef frank in a buttery brioche bun, enhanced with onions and tangy sauce. Optional melted cheese and crispy fries.", image: "/beeffrank.jpg" },
             { id: 13, name: "Cheesy BBQ Nugget Platter", price: "$9.99", description: "Crispy, seasoned chicken nuggets drizzled with barbecue sauce, optionally topped with melted cheese.", image: "/chicnug.jpg" },
             { id: 14, name: "Sakage Signature Lean Gourmet Burger", price: "$11.99", description: "85% lean beef patty, juicy and grilled to perfection on an artisanal golden roll. Optional cheese and crispy French fries.", image: "/burger.jpg" }
@@ -169,14 +165,11 @@ function App() {
             { id: 18, name: "Hash Browns", price: "$5.99", description: "Golden, crispy potato bites seasoned to perfection.", image: "/hashbrown.jpg", promo: "2 for $5.99" },
             { id: 19, name: "Blueberry Muffin", price: "$3.99", description: "Freshly baked with juicy blueberries and a sugar crust.", image: "/bmuf.jpg", promo: "Buy 1, get 1 free" },
             { id: 20, name: "Strawberry Sunrise Muffin", price: "$3.99", description: "Crisp English muffin with creamy butter and a vibrant layer of sweet-tart strawberry jam.", image: "/emuf.jpg" },
-            { id: 21, name: "Ciabatta Garlic Bread", price: "$5.00", description: "Warm ciabatta brushed with garlic butter and herbs.", image: "/gbread.jpg" },
             { id: 22, name: "Cinnamon Rolls", price: "$5.99", description: "Tender rolls with a luscious cinnamon-sugar swirl, baked until golden and soft.", image: "/cbun2.jpg", promo: "Most Ordered" },
-            { id: 23, name: "Cinnamon French Toast Fiesta", price: "$6.99", description: "Sweet French toast sticks dusted with cinnamon and powdered sugar, with optional walnuts, strawberry drizzle, hearty steak, or sausage.", image: "/fts.jpg" },
-            { id: 24, name: "Cheesecake Delight", price: "$5.99", description: "Creamy cheesecake with a graham cracker crust.", image: "/588.jpg" }
+            { id: 23, name: "Cinnamon French Toast Fiesta", price: "$6.99", description: "Sweet French toast sticks dusted with cinnamon and powdered sugar, with optional walnuts, strawberry drizzle, hearty steak, or sausage.", image: "/fts.jpg" }
         ],
         beverages: [
             { id: 25, name: "Coffee", price: "$2.99", description: "Rich, aromatic brew from premium ethically sourced beans. Choose Black, Light, or Light & Sweet.", image: "/coffee.jpg" },
-            { id: 26, name: "Latte", price: "$5.00", description: "Creamy blend of espresso and steamed milk. Flavors: Vanilla, Caramel, Hazelnut.", image: "/latte.jpg" },
             { id: 27, name: "Water", price: "$2.00", description: "Refreshing bottled water.", image: "/water.jpg" }
         ]
     };
@@ -273,7 +266,6 @@ function App() {
                         </div>
                     </VideoBackground>
                 </section>
-
                 {/* Story Section */}
                 <section id="story" className="sakage-story" aria-labelledby="story-heading">
                     <VideoBackground videoSrc="/Generated File May 13, 2025 - 4_14PM.mp4">
@@ -283,21 +275,14 @@ function App() {
                             </div>
                             <div className="sakage-story-content">
                                 <div className="sakage-story-text">
-                                    <p>Founded by Chef Marco, Sakage was born from a late-night epiphany...</p>
-                                    <p>Determined to bridge the gap between premium steakhouse quality...</p>
-                                    <p>After perfecting his recipe through midnight pop-ups...</p>
+                                    <p>Founded by Chef Marco, Sakage was born from a late-night epiphany. A third-generation butcher and classically trained chef, Marco wanted to merge the rich flavors of steak and sausage—two staples he had never seen together in a sandwich.</p>
+                                    <p>Determined to bridge the gap between premium steakhouse quality and street food accessibility, he created the perfect fusion. The name "Sakage" is a blend of "sausage," "steak," and "sandwich," embodying his culinary vision.</p>
+                                    <p>After perfecting his recipe through midnight pop-ups in food trucks in downtown LA, Sakage now delivers its signature creations straight to your door. Every sandwich reflects Marco's dedication to quality, featuring grass-fed beef, artisanal sausages, and freshly baked bread.</p>
                                 </div>
-                                <MenuImage
-                                    src="/chefmarco1 - Copy.JPG"
-                                    alt="Chef Marco preparing a chicken sandwich"
-                                    width="400"
-                                    height="300"
-                                />
                             </div>
                         </div>
                     </VideoBackground>
                 </section>
-
                 {/* Menu Section */}
                 <section id="menu" className="sakage-menu" aria-labelledby="menu-heading">
                     <VideoBackground videoSrc="/Generated File May 13, 2025 - 4_17PM.mp4">
@@ -339,43 +324,7 @@ function App() {
                                     </div>
                                 </div>
                             ))}
-                            <div className="sakage-menu-category sakage-customize-section">
-                                <h3>Customize Your Meal</h3>
-                                <div className="sakage-customize-options">
-                                    <div className="sakage-customize-option">
-                                        <h4>Sandwich Options</h4>
-                                        <ul>
-                                            {customizeOptions.sandwichOptions.map((option, index) => (
-                                                <li key={index}>{option}</li>
-                                            ))}
-                                        </ul>
-                                        <h4>Add Cheese (+$2.00)</h4>
-                                        <ul className="sakage-cheese-options">
-                                            {customizeOptions.cheeseOptions.map((option, index) => (
-                                                <li key={index}>{option}</li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                    <div className="sakage-customize-option">
-                                        <h4>Coffee Options</h4>
-                                        <ul>
-                                            <li>Flavors: {customizeOptions.coffeeOptions.join(' | ')}</li>
-                                        </ul>
-                                    </div>
-                                    <div className="sakage-customize-option">
-                                        <h4>Ciabatta Garlic Bread Add-On</h4>
-                                        <ul>
-                                            {customizeOptions.garlicBreadAddOn.map((option, index) => (
-                                                <li key={index}>{option}</li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div className="sakage-menu-note">
-                                    <p>All sandwiches served on freshly baked ciabatta unless stated otherwise.</p>
-                                    <p>Ask about pairing your meal with our premium coffee! ☕️</p>
-                                </div>
-                            </div>
+                           
                         </div>
                     </VideoBackground>
                 </section>
@@ -397,66 +346,67 @@ function App() {
                 </section>
 
                 {/* Order Section */}
+                {/* Order Section */}
                 <section id="order" className="sakage-order" aria-labelledby="order-heading">
                     <div className="sakage-container">
                         <div className="sakage-section-title">
                             <h2 id="order-heading">Order Now</h2>
                         </div>
                         <p>Enjoy our premium sandwiches delivered in ~34 minutes!</p>
-                        <p style={{ color: '#FF6347', fontWeight: 'bold', marginBottom: '20px' }}>
+                        <p className="sakage-promo-banner">
                             Add $8.01 to get 20% off (up to $6) • $0 Delivery Fee with DashPass
                         </p>
                         <div className="sakage-delivery-options">
-                            <div className="sakage-delivery-option">
-                                <MenuImage src="/doordash.jpg" alt="DoorDash delivery option" width="100" height="100" />
-                                <h3>DoorDash</h3>
-                                <p>Order through our DoorDash virtual store (4.1 ★, 20+ reviews)</p>
+                            {/* DoorDash Option */}
+                            <div className="sakage-delivery-option sakage-delivery-highlight">
+                                <div className="sakage-delivery-icon">
+                                    <MenuImage src="/doordash.jpg" alt="DoorDash" width="100" height="100" />
+                                </div>
+                                <h3>DoorDash Delivery</h3>
+                                <p>Get Sakage delivered straight to your door through our DoorDash store (4.1 ★, 20+ reviews)</p>
                                 <a
-                                    href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true"
+                                    href="https://www.doordash.com/store/sakage-columbia-33609701/61067346/?cursor=eyJzdG9yZV9wcmltYXJ5X3ZlcnRpY2FsX2lkcyI6WzEsNCwxMDAzMzNdfQ==&pickup=false"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="sakage-btn"
+                                    className="sakage-btn sakage-btn-primary"
                                 >
                                     Order on DoorDash
                                 </a>
                             </div>
+
+                            {/* Direct Online Ordering */}
                             <div className="sakage-delivery-option">
-                                <MenuImage src="/pickup.jpg" alt="Pickup option" width="100" height="100" />
-                                <h3>Pickup</h3>
-                                <p>Order ahead and pick up at our Columbia location</p>
+                                <div className="sakage-delivery-icon">
+                                    <MenuImage src="/online-order.jpg" alt="Online Ordering" width="100" height="100" />
+                                </div>
+                                <h3>Order Direct</h3>
+                                <p>Order directly from us for delivery or pickup - more options available!</p>
                                 <a
-                                    href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true"
+                                    href="https://order.online/online-ordering/business/-14132801/"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="sakage-btn"
                                 >
-                                    Order Pickup
+                                    Order Online
                                 </a>
                             </div>
-                            <div className="sakage-delivery-option">
-                                <MenuImage src="/catering.jpg" alt="Catering option" width="100" height="100" />
-                                <h3>Catering</h3>
-                                <p>Perfect for office lunches and special events</p>
-                                <a
-                                    href="https://order.online/store/sakage-col EVs-columbia-33609701/?hideModal=true&pickup=true"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="sakage-btn"
-                                >
-                                    Order Catering
-                                </a>
-                            </div>
-                            <div className="sakage-delivery-option">
-                                <a
-                                    href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="sakage-btn"
-                                >
-                                    <MenuImage src="https://ubr.to/order-online-black" alt="Order Online button" width="120" height="48" />
-                                </a>
-                                <h3>Order Online</h3>
-                                <p>Order directly through our online store</p>
+
+                            {/* Catering Option */}
+                            <div className="sakage-delivery-option sakage-catering-option">
+                                <div className="sakage-delivery-icon">
+                                    <MenuImage src="/catering.jpg" alt="Catering" width="100" height="100" />
+                                </div>
+                                <h3>Catering & Events</h3>
+                                <p>Perfect for office lunches, meetings, and special events. Custom menus available.</p>
+                                <div className="sakage-catering-cta">
+                                    <a
+                                        href="mailto:admin@sakage.online?subject=Catering Inquiry&body=Hello Sakage Team,%0D%0A%0D%0AI'm interested in your catering services. Please send me more information about:%0D%0A- Event date%0D%0A- Number of guests%0D%0A- Menu preferences%0D%0A%0D%0AThank you!"
+                                        className="sakage-btn sakage-btn-accent"
+                                    >
+                                        Request Catering Info
+                                    </a>
+                                    <p className="sakage-catering-note">We'll respond within 24 hours</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -482,6 +432,7 @@ function App() {
                 </section>
 
                 {/* FAQ Section */}
+                {/* FAQ Section */}
                 <section id="faq" className="sakage-faq" aria-labelledby="faq-heading">
                     <div className="sakage-container">
                         <div className="sakage-section-title">
@@ -489,32 +440,38 @@ function App() {
                         </div>
                         <div className="sakage-faq-content">
                             <div className="sakage-faq-item">
-                                <h3>Do you deliver?</h3>
+                                <h3><strong>Do you deliver?</strong></h3>
                                 <p>Yes, we offer no-contact delivery via DoorDash from our Columbia location at 6260 Dove Sail Lane. Note that we are currently closed on Uber Eats as of April 21, 2025.</p>
                             </div>
+
                             <div className="sakage-faq-item">
-                                <h3>Do you cater?</h3>
-                                <p>Yes, catering is available for office lunches and special events. Please visit our online store at <a href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true" target="_blank" rel="noopener noreferrer">sakage.online</a> to place a catering order.</p>
+                                <h3><strong>Do you cater?</strong></h3>
+                                <p>Yes, catering is available for office lunches and special events. Please visit our online store at <a href="https://sakage.online" target="_blank" rel="noopener noreferrer">sakage.online</a> to place a catering order.</p>
                             </div>
+
                             <div className="sakage-faq-item">
-                                <h3>Are you hiring?</h3>
-                                <p>For career opportunities, please contact us at <a href="mailto:info@sakage.com">info@sakage.com</a> for more information.</p>
+                                <h3><strong>Are you hiring?</strong></h3>
+                                <p>For career opportunities, please contact us at <a href="mailto:admin@sakage.online">admin@sakage.online</a> for more information.</p>
                             </div>
+
                             <div className="sakage-faq-item">
-                                <h3>Do you have a full menu?</h3>
+                                <h3><strong>Do you have a full menu?</strong></h3>
                                 <p>Yes, our full menu is available on this website, featuring breakfast sandwiches, lunch specials, combo meals, sides, sweets, and beverages.</p>
                             </div>
+
                             <div className="sakage-faq-item">
-                                <h3>Do you accept reservations?</h3>
+                                <h3><strong>Do you accept reservations?</strong></h3>
                                 <p>No, we do not accept reservations as we currently offer no dine-in service. We focus on delivery and pickup options.</p>
                             </div>
+
                             <div className="sakage-faq-item">
-                                <h3>What forms of payment are accepted?</h3>
+                                <h3><strong>What forms of payment are accepted?</strong></h3>
                                 <p>We accept standard online payment methods through DoorDash and our online store. Please check with the delivery platform for specific options.</p>
                             </div>
+
                             <div className="sakage-faq-item">
-                                <h3>For other questions (e.g., gift cards, gluten-free options, nutritional facts, merchandise, franchising):</h3>
-                                <p>Please reach out to us at <a href="mailto:info@sakage.com">info@sakage.com</a> for assistance.</p>
+                                <h3><strong>For other questions (e.g., gift cards, gluten-free options, nutritional facts, merchandise, franchising):</strong></h3>
+                                <p>Please reach out to us at <a href="mailto:admin@sakage.online">admin@sakage.online</a> for assistance.</p>
                             </div>
                         </div>
                     </div>
@@ -527,9 +484,13 @@ function App() {
                             <h3>Sakage</h3>
                             <p>Premium steak and sausage sandwiches crafted with quality ingredients and culinary expertise.</p>
                             <div className="sakage-social-icons">
-                                <a href="#" aria-label="Visit our Facebook page"><i className="fab fa-facebook-f"></i></a>
-                                <a href="#" aria-label="Visit our Instagram page"><i className="fab fa-instagram"></i></a>
-                                <a href="#" aria-label="Visit our Twitter page"><i className="fab fa-twitter"></i></a>
+                                <a href="https://www.instagram.com/sakageeats/?g=5" target="_blank" rel="noopener noreferrer" aria-label="Visit our Instagram page">
+                                    <i className="fab fa-instagram"></i>
+                                </a>
+                                <a href="https://g.co/kgs/EAFDmRm" target="_blank" rel="noopener noreferrer" aria-label="Visit our Google Maps location">
+                                    <i className="fab fa-google"></i>
+                                </a>
+                                {/* Removed Facebook and Twitter since we're replacing them with Instagram and Google Maps */}
                             </div>
                         </div>
                         <div className="sakage-footer-section">
@@ -537,7 +498,7 @@ function App() {
                             <p>6260 Dove Sail Lane</p>
                             <p>Columbia, MD 21044</p>
                             <p>Phone: +1 (443) 420-7423</p>
-                            <p>Email: <a href="mailto:info@sakage.com">info@sakage.com</a></p>
+                            <p>Email: <a href="mailto:admin@sakage.online">admin@sakage.online</a></p>
                         </div>
                         <div className="sakage-footer-section">
                             <h3>Hours</h3>
