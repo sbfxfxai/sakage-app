@@ -1,10 +1,15 @@
 ﻿import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import ReactPlayer from 'react-player';
 import { Helmet } from 'react-helmet';
+import MenuImage from './components/MenuImage';
+import VideoBackground from './components/VideoBackground';
+import NavLinks from './components/NavLinks';
+import AISuggestionBox from './components/AISuggestionBox';
+import VirtualReceipt from './components/VirtualReceipt';
+import SimplifiedMenu from './components/SimplifiedMenu';
 import './App.css';
 
-// Utility function for debouncing (unchanged)
+// Utility function for debouncing
 const debounce = (func, wait) => {
     let timeout;
     const debounced = (...args) => {
@@ -15,275 +20,6 @@ const debounce = (func, wait) => {
     return debounced;
 };
 
-// Reusable MenuImage component (unchanged)
-const MenuImage = ({ src, alt, width, height, isDecorative = false }) => (
-    <img
-        src={src}
-        alt={isDecorative ? '' : alt}
-        width={width}
-        height={height}
-        loading="lazy"
-        decoding="async"
-        className="menu-item-image"
-        onError={(e) => { e.target.src = '/fallback-menu-item.jpg'; }}
-        aria-hidden={isDecorative ? 'true' : undefined}
-    />
-);
-
-MenuImage.propTypes = {
-    src: PropTypes.string.isRequired,
-    alt: PropTypes.string.isRequired,
-    width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    isDecorative: PropTypes.bool
-};
-
-// VideoBackground component (unchanged)
-const VideoBackground = ({ videoSrc, children, overlay = true }) => (
-    <div className="video-background-section">
-        <ReactPlayer
-            url={videoSrc}
-            playing
-            loop
-            muted
-            width="100%"
-            height="100%"
-            style={{ position: 'absolute', top: 0, left: 0 }}
-            config={{ file: { attributes: { preload: 'metadata', 'aria-hidden': 'true' } } }}
-            fallback={<div style={{ width: '100%', height: '100%', backgroundColor: '#f0f0f0' }} aria-hidden="true" />}
-        />
-        {overlay && <div className="video-overlay" aria-hidden="true"></div>}
-        <div className="video-content">{children}</div>
-    </div>
-);
-
-VideoBackground.propTypes = {
-    videoSrc: PropTypes.string.isRequired,
-    children: PropTypes.node.isRequired,
-    overlay: PropTypes.bool
-};
-
-// Reusable NavLinks component (unchanged)
-const NavLinks = ({ activeSection, scrollToSection, mobileNavActive, toggleMobileNav }) => {
-    const links = [
-        { id: 'home', label: 'Home' },
-        { id: 'story', label: 'Our Story' },
-        { id: 'menu', label: 'Menu' },
-        { id: 'locations', label: 'Locations' },
-        { id: 'order', label: 'Order Now', external: 'https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true' },
-        { id: 'reviews', label: 'Reviews' },
-        { id: 'faq', label: 'FAQ' }
-    ];
-
-    return (
-        <ul className={`sakage-sidebar-nav-links ${mobileNavActive ? 'active' : ''}`} role="list">
-            {links.map(({ id, label, external }) => (
-                <li key={id}>
-                    <a
-                        href={external || `#${id}`}
-                        className={activeSection === id ? 'active' : ''}
-                        aria-current={activeSection === id ? 'page' : undefined}
-                        onClick={(e) => {
-                            if (!external) {
-                                e.preventDefault();
-                                scrollToSection(id);
-                            }
-                            if (mobileNavActive) toggleMobileNav();
-                        }}
-                        {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                    >
-                        {label}
-                    </a>
-                </li>
-            ))}
-        </ul>
-    );
-};
-
-NavLinks.propTypes = {
-    activeSection: PropTypes.string.isRequired,
-    scrollToSection: PropTypes.func.isRequired,
-    mobileNavActive: PropTypes.bool.isRequired,
-    toggleMobileNav: PropTypes.func.isRequired
-};
-
-// AI Suggestion Component
-const AISuggestionBox = ({ menuData, setAiSuggestions, setShowSuggestions }) => {
-    const [userRequest, setUserRequest] = useState('');
-
-    const generateSuggestions = (request) => {
-        const keywords = request.toLowerCase().split(/\s+/).filter(k => k.length > 2); // Filter out short words
-        const suggestions = [];
-
-        // Flatten menu data and search for matches
-        Object.values(menuData).flat().forEach(item => {
-            const itemText = `${item.name} ${item.description}`.toLowerCase();
-            const matches = keywords.filter(keyword => itemText.includes(keyword));
-            if (matches.length > 0) {
-                suggestions.push({
-                    item,
-                    matchScore: matches.length,
-                    matchedKeywords: matches
-                });
-            }
-        });
-
-        // Sort by match score and limit to 3 suggestions
-        suggestions.sort((a, b) => b.matchScore - a.matchScore);
-        const topSuggestions = suggestions.slice(0, 3).map(s => s.item);
-        setAiSuggestions(topSuggestions);
-        setShowSuggestions(true);
-    };
-
-    return (
-        <section className="ai-suggestion-section" aria-labelledby="ai-suggestion-heading">
-            <VideoBackground videoSrc="/Generated File May 13, 2025 - 4_17PM.mp4">
-                <div className="sakage-container">
-                    <div className="sakage-section-title">
-                        <h2 id="ai-suggestion-heading">Tell Us What You're Craving</h2>
-                        <p>Describe your perfect meal, and our AI will craft the ideal Sakage order for you!</p>
-                    </div>
-                    <div className="ai-input-container">
-                        <input
-                            type="text"
-                            value={userRequest}
-                            onChange={(e) => setUserRequest(e.target.value)}
-                            placeholder="e.g., 'juicy steak sandwich with sweet drink'"
-                            className="ai-input"
-                            aria-label="Describe your desired meal"
-                        />
-                        <button
-                            onClick={() => generateSuggestions(userRequest)}
-                            className="sakage-btn"
-                            disabled={!userRequest.trim()}
-                            aria-label="Generate meal suggestions"
-                        >
-                            Find My Meal
-                        </button>
-                    </div>
-                </div>
-            </VideoBackground>
-        </section>
-    );
-};
-
-AISuggestionBox.propTypes = {
-    menuData: PropTypes.object.isRequired,
-    setAiSuggestions: PropTypes.func.isRequired,
-    setShowSuggestions: PropTypes.func.isRequired
-};
-
-// Virtual Receipt Component
-const VirtualReceipt = ({ suggestions }) => (
-    <section className="virtual-receipt-section" aria-labelledby="receipt-heading">
-        <div className="sakage-container">
-            <div className="sakage-section-title">
-                <h2 id="receipt-heading">Your Sakage Order</h2>
-                <p>Here's what we recommend based on your cravings</p>
-            </div>
-            {suggestions.length > 0 ? (
-                <div className="virtual-receipt">
-                    <div className="receipt-header">
-                        <h3>Sakage Receipt</h3>
-                        <p>Columbia, MD • {new Date().toLocaleDateString()}</p>
-                    </div>
-                    <div className="receipt-items">
-                        {suggestions.map(item => (
-                            <div key={item.id} className="receipt-item">
-                                <div className="receipt-item-image">
-                                    <MenuImage src={item.image} alt={item.name} width="100" height="100" />
-                                </div>
-                                <div className="receipt-item-details">
-                                    <h4>{item.name}</h4>
-                                    <p className="sakage-price">{item.price}</p>
-                                    <p>{item.description}</p>
-                                    <a
-                                        href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="sakage-btn sakage-btn-small"
-                                        aria-label={`Add ${item.name} to your order`}
-                                    >
-                                        Add to Order
-                                    </a>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                    <div className="receipt-footer">
-                        <p>Total: ${suggestions.reduce((sum, item) => sum + parseFloat(item.price.replace('$', '')), 0).toFixed(2)}</p>
-                        <a
-                            href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="sakage-btn sakage-btn-primary"
-                            aria-label="Place your order now"
-                        >
-                            Place Order
-                        </a>
-                    </div>
-                </div>
-            ) : (
-                <p>No matches found. Try a different description or browse our full menu below.</p>
-            )}
-        </div>
-    </section>
-);
-
-VirtualReceipt.propTypes = {
-    suggestions: PropTypes.array.isRequired
-};
-
-// Simplified Menu Component
-const SimplifiedMenu = ({ menuCategories }) => {
-    const [showAllMenu, setShowAllMenu] = useState({});
-
-    return (
-        <section id="menu" className="sakage-menu" aria-labelledby="menu-heading">
-            <VideoBackground videoSrc="/Generated File May 13, 2025 - 4_17PM.mp4">
-                <div className="sakage-container">
-                    <div className="sakage-section-title">
-                        <h2 id="menu-heading">Our Full Menu</h2>
-                        <p className="sakage-menu-tagline">Not sure what to order? Try our AI suggestion tool above!</p>
-                    </div>
-                    {menuCategories.map(category => (
-                        <div key={category.id} className="sakage-menu-category">
-                            <h3>{category.title}</h3>
-                            <div className="sakage-menu-items">
-                                {(showAllMenu[category.id] ? category.items : category.items.slice(0, 3)).map(item => (
-                                    <div key={item.id} className="sakage-menu-item">
-                                        <div className="sakage-menu-item-image">
-                                            <MenuImage src={item.image} alt={item.name} width="150" height="100" />
-                                        </div>
-                                        <div className="sakage-menu-item-content">
-                                            <h4>{item.name}</h4>
-                                            <p className="sakage-price">{item.price}</p>
-                                            <p>{item.description}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                            {category.items.length > 3 && (
-                                <button
-                                    className="sakage-btn sakage-btn-outline"
-                                    onClick={() => setShowAllMenu(prev => ({ ...prev, [category.id]: !prev[category.id] }))}
-                                    aria-label={`View ${showAllMenu[category.id] ? 'less' : 'all'} ${category.title}`}
-                                >
-                                    {showAllMenu[category.id] ? `Show Less` : `View All ${category.title}`}
-                                </button>
-                            )}
-                        </div>
-                    ))}
-                </div>
-            </VideoBackground>
-        </section>
-    );
-};
-
-SimplifiedMenu.propTypes = {
-    menuCategories: PropTypes.array.isRequired
-};
-
 function App() {
     const [activeSection, setActiveSection] = useState('home');
     const [mobileNavActive, setMobileNavActive] = useState(false);
@@ -291,7 +27,7 @@ function App() {
     const [aiSuggestions, setAiSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
 
-    // Menu Data (updated based on provided DoorDash menu)
+    // Menu Data
     const menuData = {
         breakfastSandwiches: [
             { id: 1, name: "Flagship Sakage Sandwich", price: "$17.99", description: "A powerhouse trio of: Premium seared steak, Savory Italian sausage, Fluffy egg whites. Served on your choice of: Crusty Ciabatta, Buttery Brioche, Flaky Croissant. Cheese Crown.", image: "/sakage1.jpg", promo: "Most Ordered" },
@@ -316,7 +52,7 @@ function App() {
         { id: 'sidesAndSweets', title: 'Sides & Sweets', items: menuData.sidesAndSweets }
     ];
 
-    // Check for mobile devices (unchanged)
+    // Check for mobile devices
     useEffect(() => {
         const handleResize = () => {
             const newIsMobile = window.innerWidth < 768;
@@ -332,7 +68,7 @@ function App() {
         };
     }, []);
 
-    // Handle scroll to update active section (unchanged)
+    // Handle scroll to update active section
     useEffect(() => {
         const handleScroll = () => {
             const sections = document.querySelectorAll('section');
@@ -360,7 +96,7 @@ function App() {
         };
     }, [activeSection]);
 
-    // Prevent background scrolling when mobile menu is open (unchanged)
+    // Prevent background scrolling when mobile menu is open
     useEffect(() => {
         if (mobileNavActive) {
             document.body.classList.add('menu-open');
@@ -375,7 +111,7 @@ function App() {
         };
     }, [mobileNavActive]);
 
-    // Scroll to section (unchanged)
+    // Scroll to section
     const scrollToSection = (sectionId) => {
         try {
             const section = document.getElementById(sectionId);
@@ -392,7 +128,7 @@ function App() {
         }
     };
 
-    // Toggle mobile navigation (unchanged)
+    // Toggle mobile navigation
     const toggleMobileNav = () => {
         setMobileNavActive(prev => !prev);
     };
@@ -410,7 +146,7 @@ function App() {
                 <meta property="og:image" content="/sakage-social.jpg" />
             </Helmet>
 
-            {/* Sidebar (unchanged) */}
+            {/* Sidebar */}
             <aside className={`sakage-sidebar ${mobileNavActive ? 'active' : ''}`} role="complementary">
                 <div className="sakage-sidebar-header">
                     <a href="#" className="sakage-logo" onClick={(e) => { e.preventDefault(); scrollToSection('home'); }}>
@@ -439,7 +175,7 @@ function App() {
             </aside>
 
             <main id="main-content">
-                {/* Hero Section (unchanged) */}
+                {/* Hero Section */}
                 <section id="home" className="sakage-hero" aria-labelledby="home-heading">
                     <VideoBackground videoSrc="/Generated File May 13, 2025 - 4_10PM.mp4" overlay={false}>
                         <div className="hero-content">
@@ -469,7 +205,7 @@ function App() {
                 {/* Virtual Receipt Section */}
                 {showSuggestions && <VirtualReceipt suggestions={aiSuggestions} />}
 
-                {/* Story Section (unchanged) */}
+                {/* Story Section */}
                 <section id="story" className="sakage-story" aria-labelledby="story-heading">
                     <VideoBackground videoSrc="/Generated File May 13, 2025 - 4_14PM.mp4">
                         <div className="sakage-container">
@@ -490,7 +226,7 @@ function App() {
                 {/* Simplified Menu Section */}
                 <SimplifiedMenu menuCategories={menuCategories} />
 
-                {/* Locations Section (unchanged) */}
+                {/* Locations Section */}
                 <section id="locations" className="sakage-locations" aria-labelledby="locations-heading">
                     <div className="sakage-container">
                         <div className="sakage-section-title">
@@ -506,7 +242,7 @@ function App() {
                     </div>
                 </section>
 
-                {/* Order Section (unchanged) */}
+                {/* Order Section */}
                 <section id="order" className="sakage-order" aria-labelledby="order-heading">
                     <div className="sakage-container">
                         <div className="sakage-section-title">
@@ -567,7 +303,7 @@ function App() {
                     </div>
                 </section>
 
-                {/* Reviews Section (unchanged) */}
+                {/* Reviews Section */}
                 <section id="reviews" className="sakage-reviews" aria-labelledby="reviews-heading">
                     <div className="sakage-container">
                         <div className="sakage-section-title">
@@ -591,7 +327,7 @@ function App() {
                     </div>
                 </section>
 
-                {/* FAQ Section (unchanged) */}
+                {/* FAQ Section */}
                 <section id="faq" className="sakage-faq" aria-labelledby="faq-heading">
                     <div className="sakage-container">
                         <div className="sakage-section-title">
@@ -630,7 +366,7 @@ function App() {
                     </div>
                 </section>
 
-                {/* Footer (unchanged) */}
+                {/* Footer */}
                 <footer className="sakage-footer">
                     <div className="sakage-footer-content">
                         <div className="sakage-footer-section">
@@ -678,5 +414,9 @@ function App() {
         </>
     );
 }
+
+App.propTypes = {
+    // No props are passed to App
+};
 
 export default App;
