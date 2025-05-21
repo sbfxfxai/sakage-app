@@ -45,7 +45,7 @@ function App() {
     // Menu Data
     const menuData = {
         breakfastSandwiches: [
-            { id: 1, name: "Flagship Sakage Sandwich", price: "$17.99", description: "A powerhouse trio of: Premium seared steak, Savory Italian sausage, Fluffy egg whites. Served on your choice of: Crusty Ciabatta, Buttery Brioche, Flaky Croissant. Cheese Crown.", image: "/sakage1.jpg", promo: "Most Ordered" },
+            { id: 1, name: "Flagship Sakage Sandwich", price: "$17.99", description: "A powerhouse trio of: Premium seared steak, Savory Italian sausage^H, Fluffy egg whites. Served on your choice of: Crusty Ciabatta, Buttery Brioche, Flaky Croissant. Cheese Crown.", image: "/sakage1.jpg", promo: "Most Ordered" },
             { id: 2, name: "Steak & Egg White Power Stack", price: "$14.99", description: "Juicy tender steak, fluffy egg whites on your choice of: Ciabatta, Brioche, Buttery Croissant. Cheese Upgrade.", image: "/steaksand1.jpg", promo: "Most Ordered" },
             { id: 3, name: "Sausage & Egg White Power Stack", price: "$11.99", description: "Savory Italian sausage, fluffy egg whites on: Toasted Ciabatta, Buttery Brioche, Flaky Croissant. Cheese Upgrade.", image: "/sausagesand.jpg", promo: "Most Ordered" },
             { id: 4, name: "The Ultimate Bacon & Cheese Stack", price: "$9.99", description: "Build-Your-Own Bacon, Egg White & Cheese Masterpiece. Crispy bacon, fluffy egg white, your choice of cheese, served on: Ciabatta, Brioche, Buttery Croissant.", image: "/baccheddar1.jpg" }
@@ -260,6 +260,8 @@ function App() {
                 <meta property="og:title" content="Sakage | Premium Steak & Sausage Sandwiches" />
                 <meta property="og:description" content="Experience our signature fusion of steakhouse quality and street food accessibility." />
                 <meta property="og:image" content="/sakage-social.jpg" />
+                {/* Stripe Buy Button Script */}
+                <script async src="https://js.stripe.com/v3/buy-button.js"></script>
             </Helmet>
 
             {/* Sidebar */}
@@ -362,6 +364,7 @@ function App() {
                         </div>
                     </div>
                 </section>
+
                 {/* Order Section */}
                 <section id="order" className="sakage-order" aria-labelledby="order-heading">
                     <div className="sakage-container">
@@ -407,8 +410,13 @@ function App() {
                                             </p>
                                         </div>
                                     </div>
-                                    <p>We'll contact you shortly to complete payment.</p>
-                                    <p>Thank you for your order!</p>
+                                    <p>Complete your payment below using our secure checkout:</p>
+                                    <stripe-buy-button
+                                        buy-button-id="buy_btn_1RR0OpJwbxmJo9UfjINJ2dnD"
+                                        publishable-key="pk_live_51R8SUvJwbxmJo9UfNaC1flIEcGEf3oLVy0Zl6cJbqfPZCcBjqkVXCcht5QCobXT2wemfi0h5HSoChizN8lk7jU1M00s4Hcz4Oo"
+                                        className="sakage-btn"
+                                    >
+                                    </stripe-buy-button>
                                 </div>
                             ) : (
                                 <div className="sakage-full-form">
@@ -549,6 +557,13 @@ function App() {
                                         <p className="sakage-form-note">
                                             $7.99 delivery fee will be added to your total. We'll contact you to complete payment.
                                         </p>
+                                        <p>Alternatively, pay now with our secure checkout:</p>
+                                        <stripe-buy-button
+                                            buy-button-id="buy_btn_1RR0OpJwbxmJo9UfjINJ2dnD"
+                                            publishable-key="pk_live_51R8SUvJwbxmJo9UfNaC1flIEcGEf3oLVy0Zl6cJbqfPZCcBjqkVXCcht5QCobXT2wemfi0h5HSoChizN8lk7jU1M00s4Hcz4Oo"
+                                            className="sakage-btn"
+                                        >
+                                        </stripe-buy-button>
                                     </form>
                                 </div>
                             )
@@ -562,6 +577,13 @@ function App() {
                                 >
                                     Get AI Meal Suggestions
                                 </button>
+                                <p>Or pay directly with our secure checkout:</p>
+                                <stripe-buy-button
+                                    buy-button-id="buy_btn_1RR0OpJwbxmJo9UfjINJ2dnD"
+                                    publishable-key="pk_live_51R8SUvJwbxmJo9UfNaC1flIEcGEf3oLVy0Zl6cJbqfPZCcBjqkVXCcht5QCobXT2wemfi0h5HSoChizN8lk7jU1M00s4Hcz4Oo"
+                                    className="sakage-btn"
+                                >
+                                </stripe-buy-button>
                             </div>
                         )}
                     </div>
