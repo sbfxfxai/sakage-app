@@ -1,6 +1,7 @@
 ﻿import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
+import { loadStripe } from '@stripe/stripe-js';
 import MenuImage from './components/MenuImage';
 import VideoBackground from './components/VideoBackground';
 import NavLinks from './components/NavLinks';
@@ -9,6 +10,9 @@ import VirtualReceipt from './components/VirtualReceipt';
 import SimplifiedMenu from './components/SimplifiedMenu';
 import PromoPopup from './components/PromoPopup';
 import './App.css';
+
+// Initialize Stripe with your publishable key
+const stripePromise = loadStripe('pk_live_51R8SUvJwbxmJo9UfNaC1flIEcGEf3oLVy0Zl6cJbqfPZCcBjqkVXCcht5QCobXT2wemfi0h5HSoChizN8lk7jU1M00s4Hcz4Oo');
 
 // Utility function for debouncing
 const debounce = (func, wait) => {
@@ -45,7 +49,7 @@ function App() {
     // Menu Data
     const menuData = {
         breakfastSandwiches: [
-            { id: 1, name: "Flagship Sakage Sandwich", price: "$17.99", description: "A powerhouse trio of: Premium seared steak, Savory Italian sausage^H, Fluffy egg whites. Served on your choice of: Crusty Ciabatta, Buttery Brioche, Flaky Croissant. Cheese Crown.", image: "/sakage1.jpg", promo: "Most Ordered" },
+            { id: 1, name: "Flagship Sakage Sandwich", price: "$17.99", description: "A powerhouse trio of: Premium seared steak, Savory Italian sausage, Fluffy egg whites. Served on your choice of: Crusty Ciabatta, Buttery Brioche, Flaky Croissant. Cheese Crown.", image: "/sakage1.jpg", promo: "Most Ordered" },
             { id: 2, name: "Steak & Egg White Power Stack", price: "$14.99", description: "Juicy tender steak, fluffy egg whites on your choice of: Ciabatta, Brioche, Buttery Croissant. Cheese Upgrade.", image: "/steaksand1.jpg", promo: "Most Ordered" },
             { id: 3, name: "Sausage & Egg White Power Stack", price: "$11.99", description: "Savory Italian sausage, fluffy egg whites on: Toasted Ciabatta, Buttery Brioche, Flaky Croissant. Cheese Upgrade.", image: "/sausagesand.jpg", promo: "Most Ordered" },
             { id: 4, name: "The Ultimate Bacon & Cheese Stack", price: "$9.99", description: "Build-Your-Own Bacon, Egg White & Cheese Masterpiece. Crispy bacon, fluffy egg white, your choice of cheese, served on: Ciabatta, Brioche, Buttery Croissant.", image: "/baccheddar1.jpg" }
@@ -204,6 +208,42 @@ function App() {
         return (subtotal + deliveryFee + tip).toFixed(2);
     };
 
+    // Handle Stripe Checkout
+    const handleStripeCheckout = async () => {
+        setIsSubmitting(true);
+        setError(null);
+        try {
+            const stripe = await stripePromise;
+            const response = await fetch('/.netlify/functions/create-checkout-session', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    items: orderDetails.items,
+                    tip: orderDetails.tip,
+                    deliveryFee: 7.99,
+                    customerDetails: {
+                        name: orderDetails.name,
+                        email: orderDetails.email,
+                        phone: orderDetails.phone,
+                        address: orderDetails.address,
+                        instructions: orderDetails.instructions
+                    }
+                })
+            });
+            if (!response.ok) {
+                throw new Error('Failed to create checkout session');
+            }
+            const session = await response.json();
+            const result = await stripe.redirectToCheckout({ sessionId: session.id });
+            if (result.error) {
+                throw new Error(result.error.message);
+            }
+        } catch (error) {
+            setError(`Checkout failed: ${error.message}. Please try again or contact support at admin@sakage.online.`);
+            setIsSubmitting(false);
+        }
+    };
+
     // Scroll to section
     const scrollToSection = (sectionId) => {
         try {
@@ -260,8 +300,7 @@ function App() {
                 <meta property="og:title" content="Sakage | Premium Steak & Sausage Sandwiches" />
                 <meta property="og:description" content="Experience our signature fusion of steakhouse quality and street food accessibility." />
                 <meta property="og:image" content="/sakage-social.jpg" />
-                {/* Stripe Buy Button Script */}
-                <script async src="https://js.stripe.com/v3/buy-button.js"></script>
+                <meta http-equiv="Content-Security-Policy" content="connect-src 'self' https://api.stripe.com;" />
             </Helmet>
 
             {/* Sidebar */}
@@ -411,12 +450,16 @@ function App() {
                                         </div>
                                     </div>
                                     <p>Complete your payment below using our secure checkout:</p>
-                                    <stripe-buy-button
-                                        buy-button-id="buy_btn_1RR0OpJwbxmJo9UfjINJ2dnD"
-                                        publishable-key="pk_live_51R8SUvJwbxmJo9UfNaC1flIEcGEf3oLVy0Zl6cJbqfPZCcBjqkVXCcht5QCobXT2wemfi0h5HSoChizN8lk7jU1M00s4Hcz4Oo"
+                                    {error && <p className="sakage-form-error">{error}</p>}
+                                    <button
                                         className="sakage-btn"
+                                        onClick={handleStripeCheckout}
+                                        disabled={isSubmitting || orderDetails.items.length === 0}
+                                        aria-label="Proceed to secure checkout"
                                     >
-                                    </stripe-buy-button>
+                                        {isSubmitting ? 'Processing...' : 'Pay Now'}
+                                    </button>
+                                    <p className="sakage-form-note">If the checkout doesn’t work, please contact us at <a href="mailto:admin@sakage.online">admin@sakage.online</a>.</p>
                                 </div>
                             ) : (
                                 <div className="sakage-full-form">
@@ -558,12 +601,15 @@ function App() {
                                             $7.99 delivery fee will be added to your total. We'll contact you to complete payment.
                                         </p>
                                         <p>Alternatively, pay now with our secure checkout:</p>
-                                        <stripe-buy-button
-                                            buy-button-id="buy_btn_1RR0OpJwbxmJo9UfjINJ2dnD"
-                                            publishable-key="pk_live_51R8SUvJwbxmJo9UfNaC1flIEcGEf3oLVy0Zl6cJbqfPZCcBjqkVXCcht5QCobXT2wemfi0h5HSoChizN8lk7jU1M00s4Hcz4Oo"
+                                        <button
                                             className="sakage-btn"
+                                            onClick={handleStripeCheckout}
+                                            disabled={isSubmitting || orderDetails.items.length === 0}
+                                            aria-label="Proceed to secure checkout"
                                         >
-                                        </stripe-buy-button>
+                                            {isSubmitting ? 'Processing...' : 'Pay Now'}
+                                        </button>
+                                        <p className="sakage-form-note">If the checkout doesn’t work, please contact us at <a href="mailto:admin@sakage.online">admin@sakage.online</a>.</p>
                                     </form>
                                 </div>
                             )
@@ -577,13 +623,15 @@ function App() {
                                 >
                                     Get AI Meal Suggestions
                                 </button>
-                                <p>Or pay directly with our secure checkout:</p>
-                                <stripe-buy-button
-                                    buy-button-id="buy_btn_1RR0OpJwbxmJo9UfjINJ2dnD"
-                                    publishable-key="pk_live_51R8SUvJwbxmJo9UfNaC1flIEcGEf3oLVy0Zl6cJbqfPZCcBjqkVXCcht5QCobXT2wemfi0h5HSoChizN8lk7jU1M00s4Hcz4Oo"
+                                <p>Or pay directly after selecting your items:</p>
+                                <button
                                     className="sakage-btn"
+                                    onClick={() => setShowOrderForm(true)}
+                                    aria-label="Start order to proceed to checkout"
                                 >
-                                </stripe-buy-button>
+                                    Start Order
+                                </button>
+                                <p className="sakage-form-note">Select items and proceed to checkout to pay securely.</p>
                             </div>
                         )}
                     </div>
