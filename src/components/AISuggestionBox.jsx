@@ -60,7 +60,7 @@ const AISuggestionBox = ({ menuData, setAiSuggestions, setShowSuggestions }) => 
                             placeholder="e.g., 'juicy steak sandwich with sweet drink'"
                             className="ai-input"
                             aria-label="Describe your desired meal"
-                            onKeyPress={(e) => e.key === 'Enter' && generateSuggestions(userRequest)}
+                            onKeyDown={(e) => e.key === 'Enter' && generateSuggestions(userRequest)}
                         />
                         <button
                             onClick={() => generateSuggestions(userRequest)}

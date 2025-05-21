@@ -27,6 +27,8 @@ function App() {
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
     const [aiSuggestions, setAiSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
+    const [selectedSuggestion, setSelectedSuggestion] = useState(null);
+    const [showOrderForm, setShowOrderForm] = useState(false);
     const [orderDetails, setOrderDetails] = useState({
         name: '',
         phone: '',
@@ -145,26 +147,49 @@ function App() {
         }
     };
 
-    const handlePlaceOrder = async (e) => {
+    const handlePlaceOrder = (e) => {
         e.preventDefault();
         setIsSubmitting(true);
-        setError(null);
-        try {
-            const response = await fetch('/api/orders', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(orderDetails)
-            });
-            if (response.ok) {
-                setOrderConfirmed(true);
-            } else {
-                setError('Failed to submit order. Please try again.');
-            }
-        } catch (error) {
-            setError('An error occurred. Please try again later.');
-        } finally {
-            setIsSubmitting(false);
-        }
+
+        // Format order details for email/SMS
+        const orderSummary = `
+        New Order Received!
+        -----------------
+        Name: ${orderDetails.name}
+        Phone: ${orderDetails.phone}
+        Email: ${orderDetails.email}
+        Delivery Address: ${orderDetails.address}
+        ${orderDetails.instructions ? `Instructions: ${orderDetails.instructions}` : ''}
+        
+        Order Items:
+        ${orderDetails.items.map(itemId => {
+            const item = menuCategories
+                .flatMap(category => category.items)
+                .find(item => item.id === parseInt(itemId));
+            return item ? `- ${item.name} (${item.price})` : '';
+        }).join('\n')}
+        
+        Subtotal: $${orderDetails.items.reduce((sum, itemId) => {
+            const item = menuCategories
+                .flatMap(category => category.items)
+                .find(item => item.id === parseInt(itemId));
+            return sum + (item ? parseFloat(item.price.replace('$', '')) : 0);
+        }, 0).toFixed(2)}
+        Delivery Fee: $7.99
+        Tip: $${orderDetails.tip}
+        Total: $${calculateTotal()}
+    `;
+
+        // Open email client
+        const emailBody = encodeURIComponent(orderSummary);
+        window.location.href = `mailto:admin@sakage.online?subject=New Order&body=${emailBody}`;
+
+        // Open SMS app (on mobile)
+        const smsBody = encodeURIComponent(orderSummary.substring(0, 160)); // SMS length limit
+        window.location.href = `sms:+16286006451?body=${smsBody}`;
+
+        setOrderConfirmed(true);
+        setIsSubmitting(false);
     };
 
     const calculateTotal = () => {
@@ -199,6 +224,29 @@ function App() {
     // Toggle mobile navigation
     const toggleMobileNav = () => {
         setMobileNavActive(prev => !prev);
+    };
+
+    // Handle suggestion selection
+    const handleSuggestionSelect = (suggestions) => {
+        setSelectedSuggestion(suggestions);
+        setShowOrderForm(true);
+        setShowSuggestions(false);
+        setOrderDetails(prev => ({
+            ...prev,
+            items: suggestions.map(item => item.id.toString())
+        }));
+        scrollToSection('order');
+    };
+
+    // Handle back to suggestions
+    const handleBackToSuggestions = () => {
+        setShowOrderForm(false);
+        setShowSuggestions(true);
+        setSelectedSuggestion(null);
+        setOrderDetails(prev => ({
+            ...prev,
+            items: []
+        }));
     };
 
     // Current year
@@ -271,7 +319,12 @@ function App() {
                 />
 
                 {/* Virtual Receipt Section */}
-                {showSuggestions && <VirtualReceipt suggestions={aiSuggestions} />}
+                {showSuggestions && !showOrderForm && (
+                    <VirtualReceipt
+                        suggestions={aiSuggestions}
+                        onSelect={handleSuggestionSelect}
+                    />
+                )}
 
                 {/* Story Section */}
                 <section id="story" className="sakage-story" aria-labelledby="story-heading">
@@ -284,7 +337,7 @@ function App() {
                                 <div className="sakage-story-text">
                                     <p>Founded by Chef Marco, Sakage was born from a late-night epiphany. A third-generation butcher and classically trained chef, Marco wanted to merge the rich flavors of steak and sausage—two staples he had never seen together in a sandwich.</p>
                                     <p>Determined to bridge the gap between premium steakhouse quality and street food accessibility, he created the perfect fusion. The name "Sakage" is a blend of "sausage," "steak," and "sandwich," embodying his culinary vision.</p>
-                                    <p>After perfecting his recipe through midnight pop-ups in food trucks in downtown LA, Sakage now delivers its Forma de traducción: its signature creations straight to your door. Every sandwich reflects Marco's dedication to quality, featuring grass-fed beef, artisanal sausages, and freshly baked bread.</p>
+                                    <p>After perfecting his recipe through midnight pop-ups in food trucks in downtown LA, Sakage now delivers its signature creations straight to your door. Every sandwich reflects Marco's dedication to quality, featuring grass-fed beef, artisanal sausages, and freshly baked bread.</p>
                                 </div>
                             </div>
                         </div>
@@ -309,81 +362,63 @@ function App() {
                         </div>
                     </div>
                 </section>
-
                 {/* Order Section */}
                 <section id="order" className="sakage-order" aria-labelledby="order-heading">
                     <div className="sakage-container">
                         <div className="sakage-section-title">
                             <h2 id="order-heading">Order Now</h2>
                         </div>
-                        <p>Enjoy our premium sandwiches delivered in ~34 minutes!</p>
-                        <p className="sakage-promo-banner">
-                            Add $1.01 to get 25% off (up to $8) • $0 Delivery Fee with DashPass
-                        </p>
-                        <div className="sakage-delivery-options">
-                            <div className="sakage-delivery-option sakage-delivery-highlight">
-                                <div className="sakage-delivery-icon">
-                                    <MenuImage src="/doordash.jpg" alt="DoorDash" width="100" height="100" />
-                                </div>
-                                <h3>DoorDash Delivery</h3>
-                                <p>Get Sakage delivered straight to your door through our DoorDash store (4.1 ★, 20+ reviews)</p>
-                                <a
-                                    href="https://www.doordash.com/store/sakage-columbia-33609701/61067346/?cursor=eyJzdG9yZV9wcmltYXJ5X3ZlcnRpY2FsX2lkcyI6WzEsNCwxMDAzMzNdfQ==&pickup=false"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="sakage-btn sakage-btn-primary"
-                                >
-                                    Order on DoorDash
-                                </a>
-                            </div>
-                            <div className="sakage-delivery-option">
-                                <div className="sakage-delivery-icon">
-                                    <MenuImage src="/square-logo.png" alt="Square Payments" width="100" height="100" />
-                                </div>
-                                <h3>Order Direct</h3>
-                                <p>Provide your details and we'll prepare your order</p>
-                                {orderConfirmed ? (
-                                    <div className="sakage-order-confirmation">
-                                        <i className="fas fa-check-circle"></i>
-                                        <h4>Order Received!</h4>
-                                        <p>We've received your order details:</p>
-                                        <div className="sakage-order-summary">
-                                            <p><strong>Name:</strong> {orderDetails.name}</p>
-                                            <p><strong>Phone:</strong> {orderDetails.phone}</p>
-                                            <p><strong>Email:</strong> {orderDetails.email}</p>
-                                            <p><strong>Delivery to:</strong> {orderDetails.address}</p>
-                                            {orderDetails.instructions && (
-                                                <p><strong>Instructions:</strong> {orderDetails.instructions}</p>
-                                            )}
-                                            <p><strong>Items:</strong></p>
-                                            <ul>
-                                                {orderDetails.items.map(itemId => {
-                                                    const item = menuCategories
-                                                        .flatMap(category => category.items)
-                                                        .find(item => item.id === parseInt(itemId));
-                                                    return item ? (
-                                                        <li key={itemId}>{item.name} - {item.price}</li>
-                                                    ) : null;
-                                                })}
-                                            </ul>
-                                            <div className="sakage-order-total">
-                                                <p><strong>Subtotal:</strong> ${orderDetails.items.reduce((sum, itemId) => {
-                                                    const item = menuCategories
-                                                        .flatMap(category => category.items)
-                                                        .find(item => item.id === parseInt(itemId));
-                                                    return sum + (item ? parseFloat(item.price.replace('$', '')) : 0);
-                                                }, 0).toFixed(2)}</p>
-                                                <p><strong>Delivery Fee:</strong> $7.99</p>
-                                                <p><strong>Tip:</strong> ${orderDetails.tip}</p>
-                                                <p className="sakage-total-amount">
-                                                    <strong>Total:</strong> ${calculateTotal()}
-                                                </p>
-                                            </div>
+                        {showOrderForm ? (
+                            orderConfirmed ? (
+                                <div className="sakage-order-confirmation">
+                                    <i className="fas fa-check-circle"></i>
+                                    <h4>Order Received!</h4>
+                                    <p>We've received your order details:</p>
+                                    <div className="sakage-order-summary">
+                                        <p><strong>Name:</strong> {orderDetails.name}</p>
+                                        <p><strong>Phone:</strong> {orderDetails.phone}</p>
+                                        <p><strong>Email:</strong> {orderDetails.email}</p>
+                                        <p><strong>Delivery to:</strong> {orderDetails.address}</p>
+                                        {orderDetails.instructions && (
+                                            <p><strong>Instructions:</strong> {orderDetails.instructions}</p>
+                                        )}
+                                        <p><strong>Items:</strong></p>
+                                        <ul>
+                                            {orderDetails.items.map(itemId => {
+                                                const item = menuCategories
+                                                    .flatMap(category => category.items)
+                                                    .find(item => item.id === parseInt(itemId));
+                                                return item ? (
+                                                    <li key={itemId}>{item.name} - {item.price}</li>
+                                                ) : null;
+                                            })}
+                                        </ul>
+                                        <div className="sakage-order-total">
+                                            <p><strong>Subtotal:</strong> ${orderDetails.items.reduce((sum, itemId) => {
+                                                const item = menuCategories
+                                                    .flatMap(category => category.items)
+                                                    .find(item => item.id === parseInt(itemId));
+                                                return sum + (item ? parseFloat(item.price.replace('$', '')) : 0);
+                                            }, 0).toFixed(2)}</p>
+                                            <p><strong>Delivery Fee:</strong> $7.99</p>
+                                            <p><strong>Tip:</strong> ${orderDetails.tip}</p>
+                                            <p className="sakage-total-amount">
+                                                <strong>Total:</strong> ${calculateTotal()}
+                                            </p>
                                         </div>
-                                        <p>We'll contact you shortly to complete payment.</p>
-                                        <p>Thank you for your order!</p>
                                     </div>
-                                ) : (
+                                    <p>We'll contact you shortly to complete payment.</p>
+                                    <p>Thank you for your order!</p>
+                                </div>
+                            ) : (
+                                <div className="sakage-full-form">
+                                    <button
+                                        onClick={handleBackToSuggestions}
+                                        className="sakage-btn sakage-btn-back"
+                                        aria-label="Back to meal suggestions"
+                                    >
+                                        ← Back to Suggestions
+                                    </button>
                                     <form className="sakage-order-form" onSubmit={handlePlaceOrder}>
                                         {error && <p className="sakage-form-error">{error}</p>}
                                         <div className="sakage-form-group">
@@ -456,7 +491,7 @@ function App() {
                                             <p id="instructions-help" className="sakage-form-note">Optional delivery instructions</p>
                                         </div>
                                         <div className="sakage-form-group">
-                                            <label htmlFor="items">Select Items *</label>
+                                            <label htmlFor="items">Selected Meal Items</label>
                                             <select
                                                 multiple
                                                 id="items"
@@ -472,7 +507,7 @@ function App() {
                                                     ))
                                                 )}
                                             </select>
-                                            <p id="items-help" className="sakage-form-note">Select one or more items from the menu (Ctrl+click for multiple)</p>
+                                            <p id="items-help" className="sakage-form-note">Your suggested meal is pre-filled. You can modify items (Ctrl+click for multiple)</p>
                                         </div>
                                         <div className="sakage-form-group">
                                             <label htmlFor="tip">Tip Amount ($) *</label>
@@ -515,25 +550,20 @@ function App() {
                                             $7.99 delivery fee will be added to your total. We'll contact you to complete payment.
                                         </p>
                                     </form>
-                                )}
-                            </div>
-                            <div className="sakage-delivery-option sakage-catering-option">
-                                <div className="sakage-delivery-icon">
-                                    <MenuImage src="/catering.jpg" alt="Catering" width="100" height="100" />
                                 </div>
-                                <h3>Catering & Events</h3>
-                                <p>Perfect for office lunches, meetings, and special events. Custom menus available.</p>
-                                <div className="sakage-catering-cta">
-                                    <a
-                                        href="mailto:admin@sakage.online?subject=Catering Inquiry&body=Hello Sakage Team,%0D%0A%0D%0AI'm interested in your catering services. Please send me more information about:%0D%0A- Event date%0D%0A- Number of guests%0D%0A- Menu preferences%0D%0A%0D%0AThank you!"
-                                        className="sakage-btn sakage-btn-accent"
-                                    >
-                                        Request Catering Info
-                                    </a>
-                                    <p className="sakage-catering-note">We'll respond within 24 hours</p>
-                                </div>
+                            )
+                        ) : (
+                            <div className="sakage-order-options">
+                                <p>Enjoy our premium sandwiches delivered in ~34 minutes!</p>
+                                <button
+                                    onClick={() => setShowSuggestions(true)}
+                                    className="sakage-btn sakage-btn-primary"
+                                    aria-label="Get personalized meal suggestions"
+                                >
+                                    Get AI Meal Suggestions
+                                </button>
                             </div>
-                        </div>
+                        )}
                     </div>
                 </section>
 
