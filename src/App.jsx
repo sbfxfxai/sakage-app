@@ -642,7 +642,7 @@ function App() {
                     <div className="sakage-container">
                         <div className="sakage-section-title">
                             <h2 id="reviews-heading">What Our Customers Say</h2>
-                            <p>4.1 ★ based on 20+ DoorDash reviews</p>
+                            <p>Based on 30+ DoorDash reviews</p>
                         </div>
                         <div className="sakage-reviews-grid">
                             {[
