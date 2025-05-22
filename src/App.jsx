@@ -434,9 +434,9 @@ function App() {
                                     ></stripe-buy-button>
                                     <p className="sakage-form-note mt-4 text-red-500">
                                         Note: $25 is our average order and preset amount. To avoid delays, you must enter the exact amount of:
-                                        <div className="text-4xl font-bold my-2">${calculateTotal()}</div>
+                                        <div className="text-6xl font-extrabold my-3 text-center" style={{ color: '#dc2626' }}>${calculateTotal()}</div>
                                         on the next payment screen. If you underpay, we'll send a payment link for the difference. If you overpay, you'll receive a credit or refund (minus a small processing fee). Contact{' '}
-                                        <a href="mailto:admin@sakage.online" className="text-accent">
+                                        <a href="mailto:admin@sakage.online" className="text-accent font-semibold">
                                             admin@sakage.online
                                         </a> if you need assistance.
                                     </p>
