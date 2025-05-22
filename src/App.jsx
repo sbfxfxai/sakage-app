@@ -378,7 +378,6 @@ function App() {
                         </div>
                     </div>
                 </section>
-
                 {/* Order Section */}
                 <section id="order" className="sakage-order" aria-labelledby="order-heading">
                     <div className="sakage-container">
@@ -424,14 +423,21 @@ function App() {
                                             </p>
                                         </div>
                                     </div>
+
                                     <p className="my-4">Complete your payment below using our secure checkout:</p>
                                     {error && <p className="sakage-form-error text-red-500 mb-4">{error}</p>}
-                                    <stripe-buy-button
-                                        buy-button-id="buy_btn_1RRZrbJwbxmJo9UfqEvwk26d"
-                                        publishable-key="pk_live_51R8SUvJwbxmJo9UfNaC1flIEcGEf3oLVy0Zl6cJbqfPZCcBjqkVXCcht5QCobXT2wemfi0h5HSoChizN8lk7jU1M00s4Hcz4Oo"
-                                        className="sakage-stripe-buy-button"
-                                        disabled={isSubmitting || orderDetails.items.length === 0}
-                                    ></stripe-buy-button>
+
+                                    <div className="mt-6">
+                                        <script async src="https://js.stripe.com/v3/buy-button.js"></script>
+                                        <stripe-buy-button
+                                            buy-button-id="buy_btn_1RR0OpJwbxmJo9UfjINJ2dnD"
+                                            publishable-key="pk_live_51R8SUvJwbxmJo9UfNaC1flIEcGEf3oLVy0Zl6cJbqfPZCcBjqkVXCcht5QCobXT2wemfi0h5HSoChizN8lk7jU1M00s4Hcz4Oo"
+                                            className="sakage-stripe-buy-button font-bold uppercase tracking-wider"
+                                        >
+                                            PAY EXACTLY: ${calculateTotal()}
+                                        </stripe-buy-button>
+                                    </div>
+
                                     <p className="sakage-form-note mt-4 text-red-500">
                                         Note: $25 is our average order and preset amount. To avoid delays, you must enter the exact amount of:
                                         <div className="text-6xl font-extrabold my-3 text-center" style={{ color: '#dc2626' }}>${calculateTotal()}</div>
