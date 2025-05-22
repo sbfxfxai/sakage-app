@@ -1,7 +1,6 @@
 ﻿import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
-import { loadStripe } from '@stripe/stripe-js';
 import MenuImage from './components/MenuImage';
 import VideoBackground from './components/VideoBackground';
 import NavLinks from './components/NavLinks';
@@ -10,9 +9,6 @@ import VirtualReceipt from './components/VirtualReceipt';
 import SimplifiedMenu from './components/SimplifiedMenu';
 import PromoPopup from './components/PromoPopup';
 import './App.css';
-
-// Initialize Stripe with your publishable key
-const stripePromise = loadStripe('pk_live_51R8SUvJwbxmJo9UfNaC1flIEcGEf3oLVy0Zl6cJbqfPZCcBjqkVXCcht5QCobXT2wemfi0h5HSoChizN8lk7jU1M00s4Hcz4Oo');
 
 // Utility function for debouncing
 const debounce = (func, wait) => {
@@ -23,6 +19,50 @@ const debounce = (func, wait) => {
     };
     debounced.cancel = () => clearTimeout(timeout);
     return debounced;
+};
+
+// Custom MultiSelect component for item selection
+const MultiSelect = ({ options, selectedValues, onChange, label, helpText, helpId }) => {
+    const handleToggle = (value) => {
+        const newSelected = selectedValues.includes(value)
+            ? selectedValues.filter(item => item !== value)
+            : [...selectedValues, value];
+        onChange({ target: { name: 'items', value: newSelected } });
+    };
+
+    return (
+        <div className="sakage-form-group">
+            <label className="sakage-form-label">{label}</label>
+            <div className="sakage-multi-select">
+                {options.map(option => (
+                    <div
+                        key={option.value}
+                        className={`sakage-multi-select-item ${selectedValues.includes(option.value) ? 'selected' : ''}`}
+                        onClick={() => handleToggle(option.value)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => e.key === 'Enter' && handleToggle(option.value)}
+                        aria-selected={selectedValues.includes(option.value)}
+                    >
+                        {option.label}
+                    </div>
+                ))}
+            </div>
+            {helpText && <p id={helpId} className="sakage-form-note">{helpText}</p>}
+        </div>
+    );
+};
+
+MultiSelect.propTypes = {
+    options: PropTypes.arrayOf(PropTypes.shape({
+        value: PropTypes.string,
+        label: PropTypes.string
+    })).isRequired,
+    selectedValues: PropTypes.arrayOf(PropTypes.string).isRequired,
+    onChange: PropTypes.func.isRequired,
+    label: PropTypes.string.isRequired,
+    helpText: PropTypes.string,
+    helpId: PropTypes.string
 };
 
 function App() {
@@ -138,7 +178,7 @@ function App() {
                 tip: value
             }));
         } else if (name === 'items') {
-            const selectedItems = Array.from(e.target.selectedOptions, option => option.value);
+            const selectedItems = Array.isArray(value) ? value : Array.from(e.target.selectedOptions, option => option.value);
             setOrderDetails(prev => ({
                 ...prev,
                 items: selectedItems
@@ -154,44 +194,6 @@ function App() {
     const handlePlaceOrder = (e) => {
         e.preventDefault();
         setIsSubmitting(true);
-
-        // Format order details for email/SMS
-        const orderSummary = `
-        New Order Received!
-        -----------------
-        Name: ${orderDetails.name}
-        Phone: ${orderDetails.phone}
-        Email: ${orderDetails.email}
-        Delivery Address: ${orderDetails.address}
-        ${orderDetails.instructions ? `Instructions: ${orderDetails.instructions}` : ''}
-        
-        Order Items:
-        ${orderDetails.items.map(itemId => {
-            const item = menuCategories
-                .flatMap(category => category.items)
-                .find(item => item.id === parseInt(itemId));
-            return item ? `- ${item.name} (${item.price})` : '';
-        }).join('\n')}
-        
-        Subtotal: $${orderDetails.items.reduce((sum, itemId) => {
-            const item = menuCategories
-                .flatMap(category => category.items)
-                .find(item => item.id === parseInt(itemId));
-            return sum + (item ? parseFloat(item.price.replace('$', '')) : 0);
-        }, 0).toFixed(2)}
-        Delivery Fee: $7.99
-        Tip: $${orderDetails.tip}
-        Total: $${calculateTotal()}
-    `;
-
-        // Open email client
-        const emailBody = encodeURIComponent(orderSummary);
-        window.location.href = `mailto:admin@sakage.online?subject=New Order&body=${emailBody}`;
-
-        // Open SMS app (on mobile)
-        const smsBody = encodeURIComponent(orderSummary.substring(0, 160)); // SMS length limit
-        window.location.href = `sms:+16286006451?body=${smsBody}`;
-
         setOrderConfirmed(true);
         setIsSubmitting(false);
     };
@@ -206,42 +208,6 @@ function App() {
         const deliveryFee = 7.99;
         const tip = parseFloat(orderDetails.tip) || 0;
         return (subtotal + deliveryFee + tip).toFixed(2);
-    };
-
-    // Handle Stripe Checkout
-    const handleStripeCheckout = async () => {
-        setIsSubmitting(true);
-        setError(null);
-        try {
-            const stripe = await stripePromise;
-            const response = await fetch('/.netlify/functions/create-checkout-session', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    items: orderDetails.items,
-                    tip: orderDetails.tip,
-                    deliveryFee: 7.99,
-                    customerDetails: {
-                        name: orderDetails.name,
-                        email: orderDetails.email,
-                        phone: orderDetails.phone,
-                        address: orderDetails.address,
-                        instructions: orderDetails.instructions
-                    }
-                })
-            });
-            if (!response.ok) {
-                throw new Error('Failed to create checkout session');
-            }
-            const session = await response.json();
-            const result = await stripe.redirectToCheckout({ sessionId: session.id });
-            if (result.error) {
-                throw new Error(result.error.message);
-            }
-        } catch (error) {
-            setError(`Checkout failed: ${error.message}. Please try again or contact support at admin@sakage.online.`);
-            setIsSubmitting(false);
-        }
     };
 
     // Scroll to section
@@ -292,15 +258,24 @@ function App() {
     // Current year
     const currentYear = new Date().getFullYear();
 
+    // Options for MultiSelect component
+    const itemOptions = menuCategories.flatMap(category =>
+        category.items.map(item => ({
+            value: item.id.toString(),
+            label: `${item.name} - ${item.price}`
+        }))
+    );
+
     return (
         <>
             <Helmet>
                 <title>Sakage | Premium Steak & Sausage Sandwiches</title>
-                <meta name="description" content="Sakage offers premium steak and sausage sandwiches crafted with quality ingredients. Order now for delivery in Columbia, MD." />
+                <meta name="description" content="Sakage delivers premium steak and sausage sandwiches with AI-powered ordering. Choose DoorDash, our platforms, or AI to craft your perfect meal, giving you control and trust." />
                 <meta property="og:title" content="Sakage | Premium Steak & Sausage Sandwiches" />
-                <meta property="og:description" content="Experience our signature fusion of steakhouse quality and street food accessibility." />
+                <meta property="og:description" content="Experience premium sandwiches with AI-driven ordering, multiple platforms, and a trust-based checkout that puts you in control." />
                 <meta property="og:image" content="/sakage-social.jpg" />
-                <meta http-equiv="Content-Security-Policy" content="connect-src 'self' https://api.stripe.com;" />
+                <meta http-equiv="Content-Security-Policy" content="connect-src 'self' https://api.stripe.com https://js.stripe.com;" />
+                <script async src="https://js.stripe.com/v3/buy-button.js"></script>
             </Helmet>
 
             {/* Sidebar */}
@@ -337,7 +312,7 @@ function App() {
                     <VideoBackground videoSrc="/Generated File May 13, 2025 - 4_10PM.mp4" overlay={false}>
                         <div className="hero-content">
                             <h1 id="home-heading">Sakage</h1>
-                            <p>Premium steak & sausage sandwiches, now on DoorDash with exclusive deals!</p>
+                            <p>Premium steak & sausage sandwiches—order directly here for exclusive deals!</p>
                             <div className="hero-button-container">
                                 <a
                                     href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true"
@@ -376,9 +351,10 @@ function App() {
                             </div>
                             <div className="sakage-story-content">
                                 <div className="sakage-story-text">
-                                    <p>Founded by Chef Marco, Sakage was born from a late-night epiphany. A third-generation butcher and classically trained chef, Marco wanted to merge the rich flavors of steak and sausage—two staples he had never seen together in a sandwich.</p>
-                                    <p>Determined to bridge the gap between premium steakhouse quality and street food accessibility, he created the perfect fusion. The name "Sakage" is a blend of "sausage," "steak," and "sandwich," embodying his culinary vision.</p>
-                                    <p>After perfecting his recipe through midnight pop-ups in food trucks in downtown LA, Sakage now delivers its signature creations straight to your door. Every sandwich reflects Marco's dedication to quality, featuring grass-fed beef, artisanal sausages, and freshly baked bread.</p>
+                                    <h3 className="font-bold text-xl mb-4">Crafting Culinary Fusion</h3>
+                                    <p>Founded by Chef Marco, a third-generation butcher and classically trained chef, Sakage blends premium steak and sausage in sandwiches that marry steakhouse quality with street food accessibility. The name "Sakage" fuses "sausage," "steak," and "sandwich." Perfected through LA food truck pop-ups, our creations use grass-fed beef, artisanal sausages, and freshly baked bread, delivered straight to you.</p>
+                                    <h3 className="font-bold text-xl mt-6 mb-4">Sakage AI: Empowering You</h3>
+                                    <p>At Sakage, we’re giving <span className="text-accent">power back to you</span>. Unlike platforms that limit choices, we offer multiple ways to order: <a href="https://order.online/store/sakage-columbia-33609701" target="_blank" rel="noopener noreferrer" className="text-accent">DoorDash</a>, our cost-effective third-party platform, our in-house system, or our cutting-edge <span className="text-accent">Sakage AI</span>. Our AI reverses the traditional menu grind—tell us what you crave (e.g., “a beefy sandwich with a sweet drink”) and your budget at <a href="https://ordersakagesand.com" target="_blank" rel="noopener noreferrer" className="text-accent">ordersakagesand.com</a>, and our sophisticated algorithm crafts a tailored order instantly. Accept it, add extras if you like, and fill in your delivery details. Payment is your call: get a secure link to pay your way, or use our <a href="https://stripe.com" target="_blank" rel="noopener noreferrer" className="text-accent">Stripe</a> self-checkout by entering your exact total (e.g., $47.97). We trust you to get it right, building a partnership that’s fast, flexible, and fair. By prioritizing your control, we’re redefining food delivery with premium ingredients and innovative tech. Join us at <a href="https://www.instagram.com/sakageeats" target="_blank" rel="noopener noreferrer" className="text-accent">@sakageeats</a>.</p>
                                 </div>
                             </div>
                         </div>
@@ -413,10 +389,10 @@ function App() {
                         {showOrderForm ? (
                             orderConfirmed ? (
                                 <div className="sakage-order-confirmation">
-                                    <i className="fas fa-check-circle"></i>
-                                    <h4>Order Received!</h4>
-                                    <p>We've received your order details:</p>
-                                    <div className="sakage-order-summary">
+                                    <i className="fas fa-check-circle text-accent text-4xl mb-4"></i>
+                                    <h4 className="text-2xl font-semibold mb-4">Order Received!</h4>
+                                    <p className="mb-4">We've received your order details:</p>
+                                    <div className="sakage-order-summary sakage-card-bg p-6 rounded-lg shadow-md">
                                         <p><strong>Name:</strong> {orderDetails.name}</p>
                                         <p><strong>Phone:</strong> {orderDetails.phone}</p>
                                         <p><strong>Email:</strong> {orderDetails.email}</p>
@@ -424,8 +400,8 @@ function App() {
                                         {orderDetails.instructions && (
                                             <p><strong>Instructions:</strong> {orderDetails.instructions}</p>
                                         )}
-                                        <p><strong>Items:</strong></p>
-                                        <ul>
+                                        <p className="mt-4"><strong>Items:</strong></p>
+                                        <ul className="list-disc pl-5">
                                             {orderDetails.items.map(itemId => {
                                                 const item = menuCategories
                                                     .flatMap(category => category.items)
@@ -435,7 +411,7 @@ function App() {
                                                 ) : null;
                                             })}
                                         </ul>
-                                        <div className="sakage-order-total">
+                                        <div className="sakage-order-total mt-4">
                                             <p><strong>Subtotal:</strong> ${orderDetails.items.reduce((sum, itemId) => {
                                                 const item = menuCategories
                                                     .flatMap(category => category.items)
@@ -444,178 +420,214 @@ function App() {
                                             }, 0).toFixed(2)}</p>
                                             <p><strong>Delivery Fee:</strong> $7.99</p>
                                             <p><strong>Tip:</strong> ${orderDetails.tip}</p>
-                                            <p className="sakage-total-amount">
+                                            <p className="sakage-total-amount font-bold text-lg">
                                                 <strong>Total:</strong> ${calculateTotal()}
                                             </p>
                                         </div>
                                     </div>
-                                    <p>Complete your payment below using our secure checkout:</p>
-                                    {error && <p className="sakage-form-error">{error}</p>}
-                                    <button
-                                        className="sakage-btn"
-                                        onClick={handleStripeCheckout}
+                                    <p className="my-4">Complete your payment below using our secure checkout:</p>
+                                    {error && <p className="sakage-form-error text-red-500 mb-4">{error}</p>}
+                                    <stripe-buy-button
+                                        buy-button-id="buy_btn_1RRZrbJwbxmJo9UfqEvwk26d"
+                                        publishable-key="pk_live_51R8SUvJwbxmJo9UfNaC1flIEcGEf3oLVy0Zl6cJbqfPZCcBjqkVXCcht5QCobXT2wemfi0h5HSoChizN8lk7jU1M00s4Hcz4Oo"
+                                        className="sakage-stripe-buy-button"
                                         disabled={isSubmitting || orderDetails.items.length === 0}
-                                        aria-label="Proceed to secure checkout"
-                                    >
-                                        {isSubmitting ? 'Processing...' : 'Pay Now'}
-                                    </button>
-                                    <p className="sakage-form-note">If the checkout doesn’t work, please contact us at <a href="mailto:admin@sakage.online">admin@sakage.online</a>.</p>
+                                    ></stripe-buy-button>
+                                    <p className="sakage-form-note mt-4 text-red-500">
+                                        Note: $25 is our average order and preset amount. To avoid delays, please enter the exact amount of{' '}
+                                        <span className="text-3xl font-bold">${calculateTotal()}</span>{' '}
+                                        in the checkout. Contact{' '}
+                                        <a href="mailto:admin@sakage.online" className="text-accent">
+                                            admin@sakage.online
+                                        </a> if you need assistance.
+                                    </p>
                                 </div>
                             ) : (
                                 <div className="sakage-full-form">
-                                    <button
-                                        onClick={handleBackToSuggestions}
-                                        className="sakage-btn sakage-btn-back"
-                                        aria-label="Back to meal suggestions"
-                                    >
-                                        ← Back to Suggestions
-                                    </button>
-                                    <form className="sakage-order-form" onSubmit={handlePlaceOrder}>
-                                        {error && <p className="sakage-form-error">{error}</p>}
-                                        <div className="sakage-form-group">
-                                            <label htmlFor="name">Full Name *</label>
-                                            <input
-                                                type="text"
-                                                id="name"
-                                                name="name"
-                                                value={orderDetails.name}
-                                                onChange={handleInputChange}
-                                                required
-                                                aria-describedby="name-help"
-                                            />
-                                            <p id="name-help" className="sakage-form-note">Please enter your full name</p>
-                                        </div>
-                                        <div className="sakage-form-group">
-                                            <label htmlFor="phone">Phone Number *</label>
-                                            <input
-                                                type="tel"
-                                                id="phone"
-                                                name="phone"
-                                                value={orderDetails.phone}
-                                                onChange={handleInputChange}
-                                                required
-                                                pattern="[0-9]{10}"
-                                                title="Please enter a 10-digit phone number"
-                                                aria-describedby="phone-help"
-                                            />
-                                            <p id="phone-help" className="sakage-form-note">Please enter a 10-digit phone number</p>
-                                            {orderDetails.phone && !/^[0-9]{10}$/.test(orderDetails.phone) && (
-                                                <p className="sakage-form-error">Please enter a valid 10-digit phone number</p>
-                                            )}
-                                        </div>
-                                        <div className="sakage-form-group">
-                                            <label htmlFor="email">Email *</label>
-                                            <input
-                                                type="email"
-                                                id="email"
-                                                name="email"
-                                                value={orderDetails.email}
-                                                onChange={handleInputChange}
-                                                required
-                                                aria-describedby="email-help"
-                                            />
-                                            <p id="email-help" className="sakage-form-note">Please enter your email address</p>
-                                        </div>
-                                        <div className="sakage-form-group">
-                                            <label htmlFor="address">Delivery Address *</label>
-                                            <textarea
-                                                id="address"
-                                                name="address"
-                                                rows="3"
-                                                value={orderDetails.address}
-                                                onChange={handleInputChange}
-                                                required
-                                                aria-describedby="address-help"
-                                            ></textarea>
-                                            <p id="address-help" className="sakage-form-note">Please enter your delivery address</p>
-                                        </div>
-                                        <div className="sakage-form-group">
-                                            <label htmlFor="instructions">Delivery Instructions</label>
-                                            <textarea
-                                                id="instructions"
-                                                name="instructions"
-                                                rows="2"
-                                                value={orderDetails.instructions}
-                                                onChange={handleInputChange}
-                                                aria-describedby="instructions-help"
-                                            ></textarea>
-                                            <p id="instructions-help" className="sakage-form-note">Optional delivery instructions</p>
-                                        </div>
-                                        <div className="sakage-form-group">
-                                            <label htmlFor="items">Selected Meal Items</label>
-                                            <select
-                                                multiple
-                                                id="items"
-                                                name="items"
-                                                value={orderDetails.items}
-                                                onChange={handleInputChange}
-                                                required
-                                                aria-describedby="items-help"
-                                            >
-                                                {menuCategories.flatMap(category =>
-                                                    category.items.map(item => (
-                                                        <option key={item.id} value={item.id}>{item.name} - {item.price}</option>
-                                                    ))
-                                                )}
-                                            </select>
-                                            <p id="items-help" className="sakage-form-note">Your suggested meal is pre-filled. You can modify items (Ctrl+click for multiple)</p>
-                                        </div>
-                                        <div className="sakage-form-group">
-                                            <label htmlFor="tip">Tip Amount ($) *</label>
-                                            <select
-                                                id="tip"
-                                                name="tip"
-                                                value={orderDetails.tip}
-                                                onChange={handleInputChange}
-                                                required
-                                                aria-describedby="tip-help"
-                                            >
-                                                <option value="0.00">No tip</option>
-                                                <option value="3.00">$3.00</option>
-                                                <option value="5.00">$5.00</option>
-                                                <option value="7.00">$7.00</option>
-                                                <option value="10.00">$10.00</option>
-                                                <option value="custom">Custom amount</option>
-                                            </select>
-                                            <p id="tip-help" className="sakage-form-note">Select a tip amount or choose custom</p>
-                                            {orderDetails.tip === 'custom' && (
-                                                <input
-                                                    type="number"
-                                                    name="customTip"
-                                                    min="0"
-                                                    step="0.01"
-                                                    placeholder="Enter custom tip amount"
-                                                    className="sakage-custom-tip"
-                                                    onChange={handleInputChange}
-                                                    aria-describedby="custom-tip-help"
-                                                />
-                                            )}
-                                            {orderDetails.tip === 'custom' && (
-                                                <p id="custom-tip-help" className="sakage-form-note">Enter a custom tip amount</p>
-                                            )}
-                                        </div>
-                                        <button type="submit" className="sakage-btn" disabled={isSubmitting}>
-                                            {isSubmitting ? 'Submitting...' : 'Place Order'}
-                                        </button>
-                                        <p className="sakage-form-note">
-                                            $7.99 delivery fee will be added to your total. We'll contact you to complete payment.
-                                        </p>
-                                        <p>Alternatively, pay now with our secure checkout:</p>
+                                    <div className="sakage-form-card">
                                         <button
-                                            className="sakage-btn"
-                                            onClick={handleStripeCheckout}
-                                            disabled={isSubmitting || orderDetails.items.length === 0}
-                                            aria-label="Proceed to secure checkout"
+                                            onClick={handleBackToSuggestions}
+                                            className="sakage-btn sakage-btn-back mb-6"
+                                            aria-label="Back to meal suggestions"
                                         >
-                                            {isSubmitting ? 'Processing...' : 'Pay Now'}
+                                            ← Back to Suggestions
                                         </button>
-                                        <p className="sakage-form-note">If the checkout doesn’t work, please contact us at <a href="mailto:admin@sakage.online">admin@sakage.online</a>.</p>
-                                    </form>
+                                        <form className="sakage-order-form space-y-6" onSubmit={handlePlaceOrder}>
+                                            {error && <p className="sakage-form-error">{error}</p>}
+                                            <div className="sakage-form-group">
+                                                <input
+                                                    type="text"
+                                                    id="name"
+                                                    name="name"
+                                                    value={orderDetails.name}
+                                                    onChange={handleInputChange}
+                                                    required
+                                                    className="sakage-form-input"
+                                                    placeholder=" "
+                                                    aria-describedby="name-help"
+                                                />
+                                                <label htmlFor="name" className="sakage-form-label">Full Name *</label>
+                                                <p id="name-help" className="sakage-form-note">Please enter your full name</p>
+                                            </div>
+                                            <div className="sakage-form-group">
+                                                <input
+                                                    type="tel"
+                                                    id="phone"
+                                                    name="phone"
+                                                    value={orderDetails.phone}
+                                                    onChange={handleInputChange}
+                                                    required
+                                                    pattern="[0-9]{10}"
+                                                    title="Please enter a 10-digit phone number"
+                                                    className="sakage-form-input"
+                                                    placeholder=" "
+                                                    aria-describedby="phone-help"
+                                                />
+                                                <label htmlFor="phone" className="sakage-form-label">Phone Number *</label>
+                                                <p id="phone-help" className="sakage-form-note">Please enter a 10-digit phone number</p>
+                                                {orderDetails.phone && !/^[0-9]{10}$/.test(orderDetails.phone) && (
+                                                    <p className="sakage-form-error">Please enter a valid 10-digit phone number</p>
+                                                )}
+                                            </div>
+                                            <div className="sakage-form-group">
+                                                <input
+                                                    type="email"
+                                                    id="email"
+                                                    name="email"
+                                                    value={orderDetails.email}
+                                                    onChange={handleInputChange}
+                                                    required
+                                                    className="sakage-form-input"
+                                                    placeholder=" "
+                                                    aria-describedby="email-help"
+                                                />
+                                                <label htmlFor="email" className="sakage-form-label">Email *</label>
+                                                <p id="email-help" className="sakage-form-note">Please enter your email address</p>
+                                            </div>
+                                            <div className="sakage-form-group">
+                                                <textarea
+                                                    id="address"
+                                                    name="address"
+                                                    rows="3"
+                                                    value={orderDetails.address}
+                                                    onChange={handleInputChange}
+                                                    required
+                                                    className="sakage-form-input"
+                                                    placeholder=" "
+                                                    aria-describedby="address-help"
+                                                ></textarea>
+                                                <label htmlFor="address" className="sakage-form-label">Delivery Address *</label>
+                                                <p id="address-help" className="sakage-form-note">Please enter your delivery address</p>
+                                            </div>
+                                            <div className="sakage-form-group">
+                                                <textarea
+                                                    id="instructions"
+                                                    name="instructions"
+                                                    rows="2"
+                                                    value={orderDetails.instructions}
+                                                    onChange={handleInputChange}
+                                                    className="sakage-form-input"
+                                                    placeholder=" "
+                                                    aria-describedby="instructions-help"
+                                                ></textarea>
+                                                <label htmlFor="instructions" className="sakage-form-label">Delivery Instructions</label>
+                                                <p id="instructions-help" className="sakage-form-note">Optional delivery instructions</p>
+                                            </div>
+                                            <MultiSelect
+                                                options={itemOptions}
+                                                selectedValues={orderDetails.items}
+                                                onChange={handleInputChange}
+                                                label="Selected Meal Items *"
+                                                helpText="Click to select or deselect items. Suggested items are pre-filled."
+                                                helpId="items-help"
+                                            />
+                                            <div className="sakage-form-group">
+                                                <select
+                                                    id="tip"
+                                                    name="tip"
+                                                    value={orderDetails.tip}
+                                                    onChange={handleInputChange}
+                                                    required
+                                                    className="sakage-form-input"
+                                                    aria-describedby="tip-help"
+                                                >
+                                                    <option value="0.00">No tip</option>
+                                                    <option value="3.00">$3.00</option>
+                                                    <option value="5.00">$5.00</option>
+                                                    <option value="7.00">$7.00</option>
+                                                    <option value="10.00">$10.00</option>
+                                                    <option value="custom">Custom amount</option>
+                                                </select>
+                                                <label htmlFor="tip" className="sakage-form-label">Tip Amount ($) *</label>
+                                                <p id="tip-help" className="sakage-form-note">Select a tip amount or choose custom</p>
+                                                {orderDetails.tip === 'custom' && (
+                                                    <input
+                                                        type="number"
+                                                        name="customTip"
+                                                        min="0"
+                                                        step="0.01"
+                                                        placeholder="Enter custom tip amount"
+                                                        className="sakage-form-input sakage-custom-tip"
+                                                        onChange={handleInputChange}
+                                                        aria-describedby="custom-tip-help"
+                                                    />
+                                                )}
+                                                {orderDetails.tip === 'custom' && (
+                                                    <p id="custom-tip-help" className="sakage-form-note">Enter a custom tip amount</p>
+                                                )}
+                                            </div>
+                                            <div>
+                                                <button
+                                                    type="submit"
+                                                    className="sakage-btn sakage-btn-primary"
+                                                    disabled={isSubmitting}
+                                                    aria-label="Place your order"
+                                                >
+                                                    {isSubmitting ? 'Submitting...' : 'Place Order'}
+                                                </button>
+                                                <p className="sakage-form-note">
+                                                    $7.99 delivery fee will be added to your total. Proceed to secure checkout.
+                                                </p>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div className="sakage-order-preview">
+                                        <h3>Order Summary</h3>
+                                        {orderDetails.items.length === 0 ? (
+                                            <p>No items selected yet.</p>
+                                        ) : (
+                                            <>
+                                                <ul className="list-disc pl-5 mb-4">
+                                                    {orderDetails.items.map(itemId => {
+                                                        const item = menuCategories
+                                                            .flatMap(category => category.items)
+                                                            .find(item => item.id === parseInt(itemId));
+                                                        return item ? (
+                                                            <li key={itemId}>{item.name} - {item.price}</li>
+                                                        ) : null;
+                                                    })}
+                                                </ul>
+                                                <div className="sakage-order-total">
+                                                    <p><strong>Subtotal:</strong> ${orderDetails.items.reduce((sum, itemId) => {
+                                                        const item = menuCategories
+                                                            .flatMap(category => category.items)
+                                                            .find(item => item.id === parseInt(itemId));
+                                                        return sum + (item ? parseFloat(item.price.replace('$', '')) : 0);
+                                                    }, 0).toFixed(2)}</p>
+                                                    <p><strong>Delivery Fee:</strong> $7.99</p>
+                                                    <p><strong>Tip:</strong> ${orderDetails.tip}</p>
+                                                    <p className="sakage-total-amount font-bold text-lg">
+                                                        <strong>Total:</strong> ${calculateTotal()}
+                                                    </p>
+                                                </div>
+                                            </>
+                                        )}
+                                    </div>
                                 </div>
                             )
                         ) : (
-                            <div className="sakage-order-options">
-                                <p>Enjoy our premium sandwiches delivered in ~34 minutes!</p>
+                            <div className="sakage-order-options text-center space-y-4">
+                                <p className="text-lg">Enjoy our premium sandwiches delivered in ~34 minutes!</p>
                                 <button
                                     onClick={() => setShowSuggestions(true)}
                                     className="sakage-btn sakage-btn-primary"
@@ -625,7 +637,7 @@ function App() {
                                 </button>
                                 <p>Or pay directly after selecting your items:</p>
                                 <button
-                                    className="sakage-btn"
+                                    className="sakage-btn sakage-btn-secondary"
                                     onClick={() => setShowOrderForm(true)}
                                     aria-label="Start order to proceed to checkout"
                                 >
@@ -745,7 +757,6 @@ function App() {
                     </div>
                 </footer>
             </main>
-           
         </>
     );
 }

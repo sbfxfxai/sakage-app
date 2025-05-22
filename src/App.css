@@ -1150,7 +1150,660 @@ section {
         font-size: 0.9rem;
     }
 }
+/* Order Section */
+/* Order Section */
+.sakage-order {
+    background-color: var(--dark);
+    text-align: center;
+    padding: 7rem 1rem;
+    position: relative;
+}
 
+/* Full form layout (form + order preview) */
+.sakage-full-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Form card (main form container) */
+.sakage-form-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    flex: 2;
+    min-width: 300px;
+    transition: transform 0.3s ease;
+}
+
+    .sakage-form-card:hover {
+        transform: translateY(-5px);
+    }
+
+/* Order preview (summary) */
+.sakage-order-preview {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    flex: 1;
+    min-width: 300px;
+    border: 1px solid var(--accent);
+}
+
+    .sakage-order-preview h3 {
+        font-size: 1.5rem;
+        color: var(--secondary);
+        margin-bottom: 1rem;
+    }
+
+    .sakage-order-preview ul {
+        list-style: disc;
+        padding-left: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--text-white);
+    }
+
+    .sakage-order-preview p {
+        color: var(--text-white);
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+/* Form group with floating labels */
+.sakage-form-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.sakage-form-label {
+    position: absolute;
+    top: 50%;
+    left: 1rem;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    background: var(--card-bg);
+    padding: 0 0.25rem;
+}
+
+.sakage-form-input:focus + .sakage-form-label,
+.sakage-form-input:not(:placeholder-shown) + .sakage-form-label {
+    top: 0;
+    transform: translateY(-100%);
+    font-size: 0.85rem;
+    color: var(--accent);
+    background: var(--card-bg);
+}
+
+/* Input and textarea styling */
+.sakage-form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-white);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+    .sakage-form-input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(255, 99, 71, 0.3);
+    }
+
+textarea.sakage-form-input {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Custom tip input */
+.sakage-custom-tip {
+    margin-top: 0.5rem;
+}
+
+/* Multi-select styling */
+.sakage-multi-select {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.sakage-multi-select-item {
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--text-white);
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+    .sakage-multi-select-item:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .sakage-multi-select-item.selected {
+        background: var(--accent);
+        color: var(--button-text);
+        border: 1px solid var(--accent);
+    }
+
+    .sakage-multi-select-item:focus {
+        outline: 2px solid var(--secondary);
+        outline-offset: 2px;
+    }
+
+/* Form note and error */
+.sakage-form-note {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 0.25rem;
+}
+
+.sakage-form-error {
+    font-size: 0.85rem;
+    color: #ff4d4f;
+    margin-top: 0.25rem;
+}
+
+/* Buttons */
+.sakage-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--accent);
+    color: var(--button-text);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+    .sakage-btn:hover {
+        background-color: #e54c2e;
+        color: var(--text-white);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(255, 99, 71, 0.4);
+    }
+
+    .sakage-btn:focus {
+        outline: 2px solid var(--secondary);
+        outline-offset: 3px;
+    }
+
+.sakage-btn-primary {
+    background-color: var(--accent);
+    color: var(--button-text);
+}
+
+.sakage-btn-secondary {
+    background-color: var(--secondary);
+    color: var(--dark);
+}
+
+.sakage-btn-back {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-white);
+    border: 1px solid var(--accent);
+}
+
+    .sakage-btn-back:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: var(--accent);
+    }
+
+.sakage-btn:disabled {
+    background-color: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.5);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Order confirmation */
+.sakage-order-confirmation {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+    .sakage-order-confirmation i {
+        font-size: 2.5rem;
+        color: var(--success);
+        margin-bottom: 1rem;
+    }
+
+    .sakage-order-confirmation h4 {
+        font-size: 1.75rem;
+        color: var(--secondary);
+    }
+
+.sakage-order-summary {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.sakage-order-total p {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.sakage-total-amount {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: var(--accent);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sakage-full-form {
+        flex-direction: column;
+    }
+
+    .sakage-form-card,
+    .sakage-order-preview {
+        flex: 1;
+        width: 100%;
+    }
+
+    .sakage-multi-select {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Accessibility: Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .sakage-form-card,
+    .sakage-order-preview,
+    .sakage-multi-select-item,
+    .sakage-form-label,
+    .sakage-form-input {
+        transition: none;
+    }
+}
+
+/* Print styles for order confirmation */
+@media print {
+    .sakage-order {
+        background: white;
+        color: black;
+    }
+
+    .sakage-form-card,
+    .sakage-order-preview,
+    .sakage-order-summary {
+        background: white;
+        box-shadow: none;
+        border: 1px solid #ccc;
+        color: black;
+    }
+
+        .sakage-form-input,
+        .sakage-multi-select-item,
+        .sakage-order-preview p,
+        .sakage-order-total p {
+            color: black;
+        }
+
+    .sakage-btn,
+    .sakage-btn-back {
+        display: none;
+    }
+}
+.sakage-order {
+    background-color: var(--dark);
+    text-align: center;
+    padding: 7rem 1rem;
+    position: relative;
+}
+
+/* Full form layout (form + order preview) */
+.sakage-full-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Form card (main form container) */
+.sakage-form-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    flex: 2;
+    min-width: 300px;
+    transition: transform 0.3s ease;
+}
+
+    .sakage-form-card:hover {
+        transform: translateY(-5px);
+    }
+
+/* Order preview (summary) */
+.sakage-order-preview {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    flex: 1;
+    min-width: 300px;
+    border: 1px solid var(--accent);
+}
+
+    .sakage-order-preview h3 {
+        font-size: 1.5rem;
+        color: var(--secondary);
+        margin-bottom: 1rem;
+    }
+
+    .sakage-order-preview ul {
+        list-style: disc;
+        padding-left: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--text-white);
+    }
+
+    .sakage-order-preview p {
+        color: var(--text-white);
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+/* Form group with floating labels */
+.sakage-form-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.sakage-form-label {
+    position: absolute;
+    top: 50%;
+    left: 1rem;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    background: var(--card-bg);
+    padding: 0 0.25rem;
+}
+
+.sakage-form-input:focus + .sakage-form-label,
+.sakage-form-input:not(:placeholder-shown) + .sakage-form-label {
+    top: 0;
+    transform: translateY(-100%);
+    font-size: 0.85rem;
+    color: var(--accent);
+    background: var(--card-bg);
+}
+
+/* Input and textarea styling */
+.sakage-form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-white);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+    .sakage-form-input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(255, 99, 71, 0.3);
+    }
+
+textarea.sakage-form-input {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Custom tip input */
+.sakage-custom-tip {
+    margin-top: 0.5rem;
+}
+
+/* Multi-select styling */
+.sakage-multi-select {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.sakage-multi-select-item {
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--text-white);
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+    .sakage-multi-select-item:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .sakage-multi-select-item.selected {
+        background: var(--accent);
+        color: var(--button-text);
+        border: 1px solid var(--accent);
+    }
+
+    .sakage-multi-select-item:focus {
+        outline: 2px solid var(--secondary);
+        outline-offset: 2px;
+    }
+
+/* Form note and error */
+.sakage-form-note {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 0.25rem;
+}
+
+.sakage-form-error {
+    font-size: 0.85rem;
+    color: #ff4d4f;
+    margin-top: 0.25rem;
+}
+
+/* Buttons */
+.sakage-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--accent);
+    color: var(--button-text);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+    .sakage-btn:hover {
+        background-color: #e54c2e;
+        color: var(--text-white);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(255, 99, 71, 0.4);
+    }
+
+    .sakage-btn:focus {
+        outline: 2px solid var(--secondary);
+        outline-offset: 3px;
+    }
+
+.sakage-btn-primary {
+    background-color: var(--accent);
+    color: var(--button-text);
+}
+
+.sakage-btn-secondary {
+    background-color: var(--secondary);
+    color: var(--dark);
+}
+
+.sakage-btn-back {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-white);
+    border: 1px solid var(--accent);
+}
+
+    .sakage-btn-back:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: var(--accent);
+    }
+
+.sakage-btn:disabled {
+    background-color: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.5);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Order confirmation */
+.sakage-order-confirmation {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+    .sakage-order-confirmation i {
+        font-size: 2.5rem;
+        color: var(--success);
+        margin-bottom: 1rem;
+    }
+
+    .sakage-order-confirmation h4 {
+        font-size: 1.75rem;
+        color: var(--secondary);
+    }
+
+.sakage-order-summary {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.sakage-order-total p {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.sakage-total-amount {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: var(--accent);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sakage-full-form {
+        flex-direction: column;
+    }
+
+    .sakage-form-card,
+    .sakage-order-preview {
+        flex: 1;
+        width: 100%;
+    }
+
+    .sakage-multi-select {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Accessibility: Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .sakage-form-card,
+    .sakage-order-preview,
+    .sakage-multi-select-item,
+    .sakage-form-label,
+    .sakage-form-input {
+        transition: none;
+    }
+}
+
+/* Print styles for order confirmation */
+@media print {
+    .sakage-order {
+        background: white;
+        color: black;
+    }
+
+    .sakage-form-card,
+    .sakage-order-preview,
+    .sakage-order-summary {
+        background: white;
+        box-shadow: none;
+        border: 1px solid #ccc;
+        color: black;
+    }
+
+        .sakage-form-input,
+        .sakage-multi-select-item,
+        .sakage-order-preview p,
+        .sakage-order-total p {
+            color: black;
+        }
+
+    .sakage-btn,
+    .sakage-btn-back {
+        display: none;
+    }
+}
 /* Reduced Motion Preference */
 @media (prefers-reduced-motion: reduce) {
     .sakage-sidebar,
