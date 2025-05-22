@@ -1,39 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Basic Meta Tags -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Sakage - Premium steak and sausage sandwiches in Columbia, MD. Order online via DoorDash for fast delivery or pickup." />
-    <meta name="keywords" content="Sakage, steak sandwich, sausage sandwich, Columbia MD restaurant, DoorDash delivery, breakfast sandwiches, lunch specials" />
-    <meta name="robots" content="index, follow" />
-    <meta name="author" content="Sakage Restaurant" />
+
+    <!-- Primary SEO Meta Tags -->
     <title>Sakage - Premium Steak & Sausage Sandwiches | Columbia, MD</title>
-    <!-- Open Graph Tags -->
-    <meta property="og:title" content="Sakage - Premium Steak & Sausage Sandwiches" />
-    <meta property="og:description" content="Enjoy gourmet steak and sausage sandwiches at Sakage in Columbia, MD. Order now on DoorDash!" />
-    <meta property="og:image" content="/1.jpg" />
+    <meta name="description" content="Columbia's best steak & sausage sandwiches. Open daily with DoorDash delivery. Try our signature Sakage Sandwich with premium seared steak and Italian sausage." />
+    <meta name="keywords" content="Sakage, steak sandwich Columbia MD, sausage sandwich, best lunch in Columbia, DoorDash delivery near me, breakfast sandwiches Howard County" />
+
+    <!-- Local Business Meta Tags -->
+    <meta name="geo.region" content="US-MD" />
+    <meta name="geo.placename" content="Columbia" />
+    <meta name="geo.position" content="39.2037;-76.8610" />
+    <meta name="ICBM" content="39.2037, -76.8610" />
+    <meta name="restaurant:contact" content="+14434207423" />
+    <meta name="restaurant:delivery" content="true" />
+    <meta name="restaurant:pickup" content="true" />
+
+    <!-- Social & Sharing Meta Tags -->
+    <meta property="og:site_name" content="Sakage - Columbia's Premium Sandwich Shop" />
+    <meta property="og:title" content="Sakage - Best Steak Sandwiches in Columbia, MD" />
+    <meta property="og:description" content="Columbia's favorite steak & sausage sandwiches. Open daily with fast DoorDash delivery to Howard County." />
+    <meta property="og:image" content="https://sakage.online/images/social-preview.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Sakage's signature steak sandwich with melted cheese" />
     <meta property="og:url" content="https://sakage.online" />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content="restaurant.restaurant" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="restaurant:menu" content="https://sakage.online/menu" />
+
     <!-- Twitter Card Tags -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Sakage - Premium Steak & Sausage Sandwiches" />
-    <meta name="twitter:description" content="Gourmet sandwiches in Columbia, MD. Order online for delivery or pickup!" />
-    <meta name="twitter:image" content="/1.jpg" />
-    <!-- Favicon -->
+    <meta name="twitter:site" content="@sakageeats" />
+    <meta name="twitter:creator" content="@sakageeats" />
+    <meta name="twitter:title" content="Sakage - Columbia MD's Best Sandwiches" />
+    <meta name="twitter:description" content="Premium steak & sausage sandwiches in Howard County. Open daily with fast DoorDash delivery." />
+    <meta name="twitter:image" content="https://sakage.online/images/twitter-preview.jpg" />
+    <meta name="twitter:image:alt" content="Sakage's delicious sandwich platter" />
+
+    <!-- Favicon & App Icons -->
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
-    <!-- Sitemap -->
-    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-    <!-- Structured Data (LocalBusiness) -->
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#8B4513">
+
+    <!-- Preload & Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="/src/main.jsx" as="script">
+
+    <!-- Structured Data (Enhanced LocalBusiness) -->
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
             "@type": "Restaurant",
             "name": "Sakage",
-            "description": "Premium steak and sausage sandwiches in Columbia, MD, delivered via DoorDash.",
+            "description": "Premium steak and sausage sandwiches in Columbia, MD. Voted best sandwiches in Howard County.",
+            "image": "https://sakage.online/images/hero.jpg",
+            "priceRange": "$$",
+            "telephone": "+1-443-420-7423",
+            "url": "https://sakage.online",
+            "servesCuisine": ["American", "Sandwiches", "Breakfast"],
+            "acceptsReservations": "false",
+            "menu": "https://sakage.online/menu",
+            "openingHoursSpecification": {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+                "opens": "07:00",
+                "closes": "21:00"
+            },
             "address": {
                 "@type": "PostalAddress",
                 "streetAddress": "6260 Dove Sail Lane",
@@ -42,20 +80,44 @@
                 "postalCode": "21044",
                 "addressCountry": "US"
             },
-            "telephone": "+1-443-420-7423",
-            "url": "https://sakage.online",
-            "openingHours": "Mo-Su 00:00-23:39",
-            "servesCuisine": ["American", "Sandwiches"],
+            "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": 39.2037,
+                "longitude": -76.8610
+            },
+            "hasOfferCatalog": {
+                "@type": "OfferCatalog",
+                "name": "Menu Items",
+                "itemListElement": [{
+                    "@type": "OfferCatalog",
+                    "name": "Signature Sandwiches",
+                    "itemListElement": [{
+                        "@type": "Offer",
+                        "itemOffered": {
+                            "@type": "MenuItem",
+                            "name": "Flagship Sakage Sandwich",
+                            "description": "Premium seared steak with Italian sausage and melted cheese",
+                            "offers": {
+                                "@type": "Offer",
+                                "price": "17.99",
+                                "priceCurrency": "USD"
+                            }
+                        }
+                    }]
+                }]
+            },
             "aggregateRating": {
                 "@type": "AggregateRating",
-                "ratingValue": "4.1",
-                "reviewCount": "20"
+                "ratingValue": "4.5",
+                "reviewCount": "86",
+                "bestRating": "5",
+                "worstRating": "1"
             },
-            "image": "/1.jpg",
             "sameAs": [
                 "https://www.facebook.com/sakageeats",
                 "https://www.instagram.com/sakageeats",
-                "https://twitter.com/sakageeats"
+                "https://twitter.com/sakageeats",
+                "https://www.yelp.com/biz/sakage-columbia"
             ]
         }
     </script>
@@ -63,5 +125,20 @@
 <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+
+    <!-- Local Discovery Scripts -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Sakage",
+            "url": "https://sakage.online",
+            "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://sakage.online/menu?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+            }
+        }
+    </script>
 </body>
 </html>
