@@ -2,7 +2,6 @@
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 import MenuImage from './components/MenuImage';
-import VideoBackground from './components/VideoBackground';
 import NavLinks from './components/NavLinks';
 import AISuggestionBox from './components/AISuggestionBox';
 import VirtualReceipt from './components/VirtualReceipt';
@@ -309,41 +308,22 @@ function App() {
             <main id="main-content">
                 {/* Hero Section */}
                 <section id="home" className="sakage-hero" aria-labelledby="home-heading">
-                    {!isMobile ? (
-                        <VideoBackground videoSrc="/Generated File May 13, 2025 - 4_10PM.mp4" overlay={false}>
-                            <div className="hero-content">
-                                <h1 id="home-heading">Sakage</h1>
-                                <p>Premium steak & sausage sandwiches—order directly here for exclusive deals!</p>
-                                <div className="hero-button-container">
-                                    <a
-                                        href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="sakage-btn"
-                                    >
-                                        Order Now
-                                    </a>
-                                </div>
-                            </div>
-                        </VideoBackground>
-                    ) : (
-                        <div className="bg-gradient-to-b from-gray-900 to-black min-h-screen">
-                            <div className="hero-content">
-                                <h1 id="home-heading">Sakage</h1>
-                                <p>Premium steak & sausage sandwiches—order directly here for exclusive deals!</p>
-                                <div className="hero-button-container">
-                                    <a
-                                        href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="sakage-btn"
-                                    >
-                                        Order Now
-                                    </a>
-                                </div>
+                    <div className="bg-gradient-to-b from-gray-900 to-black min-h-screen">
+                        <div className="hero-content">
+                            <h1 id="home-heading">Sakage</h1>
+                            <p>Premium steak & sausage sandwiches—order directly here for exclusive deals!</p>
+                            <div className="hero-button-container">
+                                <a
+                                    href="https://order.online/store/sakage-columbia-33609701/?hideModal=true&pickup=true"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="sakage-btn"
+                                >
+                                    Order Now
+                                </a>
                             </div>
                         </div>
-                    )}
+                    </div>
                 </section>
 
                 {/* AI Suggestion Section */}
@@ -363,39 +343,21 @@ function App() {
 
                 {/* Story Section */}
                 <section id="story" className="sakage-story" aria-labelledby="story-heading">
-                    {!isMobile ? (
-                        <VideoBackground videoSrc="/Generated File May 13, 2025 - 4_14PM.mp4">
-                            <div className="sakage-container">
-                                <div className="sakage-section-title">
-                                    <h2 id="story-heading">Our Story</h2>
-                                </div>
-                                <div className="sakage-story-content">
-                                    <div className="sakage-story-text">
-                                        <h3 className="font-bold text-xl mb-4">Crafting Culinary Fusion</h3>
-                                        <p>Founded by Chef Marco, a third-generation butcher and classically trained chef, Sakage blends premium steak and sausage in sandwiches that marry steakhouse quality with street food accessibility. The name "Sakage" fuses "sausage," "steak," and "sandwich." Perfected through LA food truck pop-ups, our creations use grass-fed beef, artisanal sausages, and freshly baked bread, delivered straight to you.</p>
-                                        <h3 className="font-bold text-xl mt-6 mb-4">Sakage AI: Empowering You</h3>
-                                        <p>At Sakage, we’re giving <span className="text-accent">power back to you</span>. Unlike platforms that limit choices, we offer multiple ways to order: <a href="https://order.online/store/sakage-columbia-33609701" target="_blank" rel="noopener noreferrer" className="text-accent">DoorDash</a>, our cost-effective third-party platform, our in-house system, or our cutting-edge <span className="text-accent">Sakage AI</span>. Our AI reverses the traditional menu grind—tell us what you crave (e.g., “a beefy sandwich with a sweet drink”) and your budget at <a href="https://ordersakagesand.com" target="_blank" rel="noopener noreferrer" className="text-accent">ordersakagesand.com</a>, and our sophisticated algorithm crafts a tailored order instantly. Accept it, add extras if you like, and fill in your delivery details. Payment is your call: get a secure link to pay your way, or use our <a href="https://stripe.com" target="_blank" rel="noopener noreferrer" className="text-accent">Stripe</a> self-checkout by entering your exact total (e.g., $47.97). We trust you to get it right, building a partnership that’s fast, flexible, and fair. By prioritizing your control, we’re redefining food delivery with premium ingredients and innovative tech. Join us at <a href="https://www.instagram.com/sakageeats" target="_blank" rel="noopener noreferrer" className="text-accent">@sakageeats</a>.</p>
-                                    </div>
-                                </div>
+                    <div className="bg-gradient-to-b from-gray-900 to-black h-auto">
+                        <div className="sakage-container">
+                            <div className="sakage-section-title">
+                                <h2 id="story-heading">Our Story</h2>
                             </div>
-                        </VideoBackground>
-                    ) : (
-                        <div className="bg-gradient-to-b from-gray-900 to-black h-auto">
-                            <div className="sakage-container">
-                                <div className="sakage-section-title">
-                                    <h2 id="story-heading">Our Story</h2>
-                                </div>
-                                <div className="sakage-story-content">
-                                    <div className="sakage-story-text">
-                                        <h3 className="font-bold text-xl mb-4">Crafting Culinary Fusion</h3>
-                                        <p>Founded by Chef Marco, a third-generation butcher and classically trained chef, Sakage blends premium steak and sausage in sandwiches that marry steakhouse quality with street food accessibility. The name "Sakage" fuses "sausage," "steak," and "sandwich." Perfected through LA food truck pop-ups, our creations use grass-fed beef, artisanal sausages, and freshly baked bread, delivered straight to you.</p>
-                                        <h3 className="font-bold text-xl mt-6 mb-4">Sakage AI: Empowering You</h3>
-                                        <p>At Sakage, we’re giving <span className="text-accent">power back to you</span>. Unlike platforms that limit choices, we offer multiple ways to order: <a href="https://order.online/store/sakage-columbia-33609701" target="_blank" rel="noopener noreferrer" className="text-accent">DoorDash</a>, our cost-effective third-party platform, our in-house system, or our cutting-edge <span className="text-accent">Sakage AI</span>. Our AI reverses the traditional menu grind—tell us what you crave (e.g., “a beefy sandwich with a sweet drink”) and your budget at <a href="https://ordersakagesand.com" target="_blank" rel="noopener noreferrer" className="text-accent">ordersakagesand.com</a>, and our sophisticated algorithm crafts a tailored order instantly. Accept it, add extras if you like, and fill in your delivery details. Payment is your call: get a secure link to pay your way, or use our <a href="https://stripe.com" target="_blank" rel="noopener noreferrer" className="text-accent">Stripe</a> self-checkout by entering your exact total (e.g., $47.97). We trust you to get it right, building a partnership that’s fast, flexible, and fair. By prioritizing your control, we’re redefining food delivery with premium ingredients and innovative tech. Join us at <a href="https://www.instagram.com/sakageeats" target="_blank" rel="noopener noreferrer" className="text-accent">@sakageeats</a>.</p>
-                                    </div>
+                            <div className="sakage-story-content">
+                                <div className="sakage-story-text">
+                                    <h3 className="font-bold text-xl mb-4">Crafting Culinary Fusion</h3>
+                                    <p>Founded by Chef Marco, a third-generation butcher and classically trained chef, Sakage blends premium steak and sausage in sandwiches that marry steakhouse quality with street food accessibility. The name "Sakage" fuses "sausage," "steak," and "sandwich." Perfected through LA food truck pop-ups, our creations use grass-fed beef, artisanal sausages, and freshly baked bread, delivered straight to you.</p>
+                                    <h3 className="font-bold text-xl mt-6 mb-4">Sakage AI: Empowering You</h3>
+                                    <p>At Sakage, we’re giving <span className="text-accent">power back to you</span>. Unlike platforms that limit choices, we offer multiple ways to order: <a href="https://order.online/store/sakage-columbia-33609701" target="_blank" rel="noopener noreferrer" className="text-accent">DoorDash</a>, our cost-effective third-party platform, our in-house system, or our cutting-edge <span className="text-accent">Sakage AI</span>. Our AI reverses the traditional menu grind—tell us what you crave (e.g., “a beefy sandwich with a sweet drink”) and your budget at <a href="https://ordersakagesand.com" target="_blank" rel="noopener noreferrer" className="text-accent">ordersakagesand.com</a>, and our sophisticated algorithm crafts a tailored order instantly. Accept it, add extras if you like, and fill in your delivery details. Payment is your call: get a secure link to pay your way, or use our <a href="https://stripe.com" target="_blank" rel="noopener noreferrer" className="text-accent">Stripe</a> self-checkout by entering your exact total (e.g., $47.97). We trust you to get it right, building a partnership that’s fast, flexible, and fair. By prioritizing your control, we’re redefining food delivery with premium ingredients and innovative tech. Join us at <a href="https://www.instagram.com/sakageeats" target="_blank" rel="noopener noreferrer" className="text-accent">@sakageeats</a>.</p>
                                 </div>
                             </div>
                         </div>
-                    )}
+                    </div>
                 </section>
 
                 {/* Simplified Menu Section */}
