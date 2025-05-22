@@ -745,7 +745,7 @@ function App() {
                     </div>
                 </footer>
             </main>
-            <PromoPopup />
+           
         </>
     );
 }
