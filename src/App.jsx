@@ -310,7 +310,29 @@ function App() {
                 <section id="home" className="sakage-hero" aria-labelledby="home-heading">
                     <div className="bg-gradient-to-b from-gray-900 to-black min-h-screen">
                         <div className="hero-content">
-                            <h1 id="home-heading">Sakage</h1>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px' }}>
+                                <h1 id="home-heading">Sakage</h1>
+                                <div style={{
+                                    backgroundColor: '#22c55e',
+                                    color: 'white',
+                                    padding: '8px 16px',
+                                    borderRadius: '20px',
+                                    fontWeight: 'bold',
+                                    fontSize: '1.2rem',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '8px'
+                                }}>
+                                    <div style={{
+                                        width: '12px',
+                                        height: '12px',
+                                        backgroundColor: 'white',
+                                        borderRadius: '50%',
+                                        animation: 'pulse 2s infinite'
+                                    }}></div>
+                                    OPEN NOW
+                                </div>
+                            </div>
                             <p>Premium steak & sausage sandwiches—order directly here for exclusive deals!</p>
                             <div className="hero-button-container">
                                 <a
