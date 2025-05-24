@@ -85,30 +85,64 @@ function App() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
 
-    // SMS Integration
+    // SMS Integration using Twilio API
     const sendOrderConfirmationSMS = async () => {
         try {
-            const response = await fetch('YOUR_SMS_API_ENDPOINT', {
+            // You'll need to set up a backend endpoint for security reasons
+            // This is just a frontend example - in production, call your own API
+            const response = await fetch('https://api.twilio.com/2010-04-01/Accounts/YOUR_TWILIO_ACCOUNT_SID/Messages.json', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': 'Basic ' + btoa('YOUR_TWILIO_ACCOUNT_SID:YOUR_TWILIO_AUTH_TOKEN')
+                },
+                body: new URLSearchParams({
+                    To: '+16286006451', // Formatted with country code
+                    From: 'YOUR_TWILIO_PHONE_NUMBER', // Your Twilio phone number
+                    Body: `New Sakage order from ${orderDetails.name} (${orderDetails.phone}):\n\n` +
+                        `Items: ${orderDetails.items.map(itemId => {
+                            const item = menuCategories
+                                .flatMap(category => category.items)
+                                .find(item => item.id === parseInt(itemId));
+                            return item ? item.name : '';
+                        }).join(', ')}\n\n` +
+                        `Total: $${calculateTotal()}\n` +
+                        `Delivery to: ${orderDetails.address}\n` +
+                        `Special instructions: ${orderDetails.instructions || 'None'}`
+                })
+            });
+
+            if (!response.ok) {
+                console.error('Failed to send SMS', await response.text());
+            } else {
+                console.log('SMS sent successfully');
+            }
+        } catch (error) {
+            console.error('Error sending SMS:', error);
+            // Fallback to email notification if SMS fails
+            sendOrderConfirmationEmail();
+        }
+    };
+
+    // Email fallback
+    const sendOrderConfirmationEmail = async () => {
+        try {
+            const response = await fetch('YOUR_EMAIL_API_ENDPOINT', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    to: '6286006451', // The phone number to send to
-                    message: `New order received from ${orderDetails.name} for $${calculateTotal()}. Items: ${orderDetails.items.map(itemId => {
-                        const item = menuCategories
-                            .flatMap(category => category.items)
-                            .find(item => item.id === parseInt(itemId));
-                        return item ? item.name : '';
-                    }).join(', ')}`
+                    to: 'admin@sakage.online',
+                    subject: `New Order - ${orderDetails.name}`,
+                    text: `Order details:\n\n${JSON.stringify(orderDetails, null, 2)}`
                 }),
             });
-
             if (!response.ok) {
-                console.error('Failed to send SMS');
+                console.error('Failed to send email');
             }
         } catch (error) {
-            console.error('Error sending SMS:', error);
+            console.error('Error sending email:', error);
         }
     };
 
